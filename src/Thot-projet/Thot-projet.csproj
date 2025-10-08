@@ -96,6 +96,16 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Abonnement.cs" />
+    <Compile Include="Models\Cours.cs" />
+    <Compile Include="Models\EntreeFAQ.cs" />
+    <Compile Include="Models\Inscription.cs" />
+    <Compile Include="Models\Paiement.cs" />
+    <Compile Include="Models\ProfilTuteur.cs" />
+    <Compile Include="Models\Question.cs" />
+    <Compile Include="Models\Reponse.cs" />
+    <Compile Include="Models\Ressource.cs" />
+    <Compile Include="Models\SessionClavardage.cs" />
     <Compile Include="Models\Utilisateur.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -6,17 +6,13 @@ using System.Web;
 
 namespace Thot_projet.Models
 {
-    public class Utilisateur
+    public class Ressource
     {
         [Key] public int id { get; set; }
-        public string Nomcomplet { get; set; }
-        public string Email { get; set; }
-        public string Role { get; set; }
-        public DateTime Creele { get; set; }
-
-
-
-
+        public int ModuleCoursId { get; set; }
+        public string Type { get; set; }
+        public string Titre { get; set; }
+        public string url { get; set; }
 
     }
 }

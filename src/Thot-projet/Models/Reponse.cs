@@ -6,17 +6,13 @@ using System.Web;
 
 namespace Thot_projet.Models
 {
-    public class Utilisateur
+    public class Reponse
     {
         [Key] public int id { get; set; }
-        public string Nomcomplet { get; set; }
-        public string Email { get; set; }
-        public string Role { get; set; }
+        public int QuestionId { get; set; }
+        public int TuteurId { get; set; }
+        public string Contenu { get; set; }
         public DateTime Creele { get; set; }
-
-
-
-
 
     }
 }
