@@ -14,5 +14,9 @@ namespace Thot_projet.Models
         public string Contenu { get; set; }
         public DateTime Creele { get; set; }
 
+        public Question Question { get; set; } // padre 1
+        public Utilisateur Tuteur { get; set; } // padre 1
+
+
     }
 }

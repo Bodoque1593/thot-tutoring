@@ -18,5 +18,14 @@ namespace Thot_projet.Models
         public bool EstResolvee { get; set; }
         public DateTime Creele { get; set; }
 
+        public Utilisateur Etudiant { get; set; } // padre 1
+        public Cours Cours { get; set; } // padre 1
+        public Ressource Ressource { get; set; } // padre 1
+
+
+        public ICollection<Reponse> Reponses { get; set; } = new List<Reponse>(); // hijo muchos
+
+
+
     }
 }

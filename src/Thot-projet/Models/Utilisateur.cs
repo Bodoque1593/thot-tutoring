@@ -14,6 +14,15 @@ namespace Thot_projet.Models
         public string Role { get; set; }
         public DateTime Creele { get; set; }
 
+     
+        public virtual ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();
+        public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+        public virtual ICollection<Reponse> Reponses { get; set; } = new List<Reponse>();
+        public virtual ICollection<Paiement> Paiements { get; set; } = new List<Paiement>();
+
+        public virtual Abonnement Abonnement { get; set; }
+        public virtual ProfilTuteur ProfilTuteur { get; set; }
+
 
 
 

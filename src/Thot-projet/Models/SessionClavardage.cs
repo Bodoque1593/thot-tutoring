@@ -15,5 +15,9 @@ namespace Thot_projet.Models
         public DateTime DemarreLe { get; set; }
         public DateTime? TermineLe { get; set; }
         public int DureeMinutes { get; set; }
+
+        public Utilisateur Etudiant { get; set; }
+        public Utilisateur Tuteur { get; set; }
+
     }
 }

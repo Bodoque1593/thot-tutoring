@@ -14,5 +14,11 @@ namespace Thot_projet.Models
         public string Titre { get; set; }
         public string url { get; set; }
 
+        public ModuleCours ModuleCours { get; set; } //hija N
+
+        public ICollection<Question> Questions { get; set; } = new List<Question>(); // hija N
+
+
+
     }
 }

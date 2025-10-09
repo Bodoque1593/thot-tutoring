@@ -15,5 +15,8 @@ namespace Thot_projet.Models
         public string Monnaie { get; set; }
         public string Statut { get; set; }
         public DateTime PayeLe { get; set; }
+
+        public Utilisateur Utilisateur { get; set; } // padre 1
+
     }
 }

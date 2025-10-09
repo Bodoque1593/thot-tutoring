@@ -6,16 +6,20 @@ using System.Web;
 
 namespace Thot_projet.Models
 {
-    public class Inscription
+    public class ModuleCours
     {
-        [Key] public int id { get; set; }
-        public int UtilisateurId { get; set; }
-        public int CoursId { get; set; }
-        public DateTime InscritLe { get; set; }
 
-        public Utilisateur Utilisateur { get; set; }
-        public Cours Cours { get; set; }
-        // tabla puente 
+        [Key] public int id { get; set; }
+
+        public int CoursId { get; set; }
+
+  
+        public Cours Cours { get; set; } 
+
+        public int Numero { get; set; }
+        public string Titre { get; set; }
+
+        public ICollection<Ressource> Ressources { get; set; } = new List<Ressource>(); // padre 1
 
     }
 }
