@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Thot_projet.Models.Cours>
+@{
+    ViewBag.Title = "Cours";
+}
+<h2>Cours</h2>
+
+<p>@Html.ActionLink("Créer nouveau", "Create", null, new { @class = "btn btn-primary" })</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Niveau</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nom</td>
+                <td>@item.Niveau</td>
+                <td>
+                    @Html.ActionLink("Détails", "Details", new { id = item.id }) |
+                    @Html.ActionLink("Éditer", "Edit", new { id = item.id }) |
+                    @Html.ActionLink("Supprimer", "Delete", new { id = item.id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

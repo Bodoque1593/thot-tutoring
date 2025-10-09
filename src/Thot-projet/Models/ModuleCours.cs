@@ -19,7 +19,7 @@ namespace Thot_projet.Models
         public int Numero { get; set; }
         public string Titre { get; set; }
 
-        public ICollection<Ressource> Ressources { get; set; } = new List<Ressource>(); // padre 1
+        public ICollection<Ressource> Ressources { get; set; } = new List<Ressource>(); 
 
     }
 }

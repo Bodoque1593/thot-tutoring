@@ -16,7 +16,7 @@ namespace Thot_projet.Models
         public ICollection<ModuleCours> Modules { get; set; } = new List<ModuleCours>(); // la clase de aca es el padre y estos son los hijos
         public ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();
 
-        public ICollection<Question> Questions { get; set; } = new List<Question>(); // hijo muchos
+        public ICollection<Question> Questions { get; set; } = new List<Question>(); 
 
       
 

@@ -10,7 +10,7 @@ namespace Thot_projet.Data
         public DbSet<Utilisateur> Utilisateurs { get; set; }
         public DbSet<Cours> Cours { get; set; }
         public DbSet<ModuleCours> ModulesCours { get; set; }
-        public DbSet<Ressource> Ressources { get; set; }
+        public DbSet<Ressource> RessourcesDefault { get; set; }
         public DbSet<Inscription> Inscriptions { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Reponse> Reponses { get; set; }
@@ -25,14 +25,14 @@ namespace Thot_projet.Data
             base.OnModelCreating(modelBuilder);
 
             // 1:N Cours -> ModuleCours (sin cascada)
-            modelBuilder.Entity<ModuleCours>()
-                .HasRequired(m => m.Cours)
-                .WithMany(c => c.Modules)
-                .HasForeignKey(m => m.CoursId)
-                .WillCascadeOnDelete(false);
+            modelBuilder.Entity<ModuleCours>() // esto quiere decir que un modulo pertenece a un curso
+                .HasRequired(m => m.Cours) //esto quiere decir que el modulo tiene que tener un curso
+                .WithMany(c => c.Modules) // esto quiere decir que un curso tiene muchos modulos
+                .HasForeignKey(m => m.CoursId) //esto quiere decir que la llave foranea del modulo es el id del curso
+                .WillCascadeOnDelete(false); // esto quiere decir que si se borra un curso no se borran sus modulos
 
             // 1:N ModuleCours -> Ressource (sin cascada)
-            modelBuilder.Entity<Ressource>()
+            modelBuilder.Entity<Ressource>() // esto quiere decir que una ressource pertenece a un modulo
                 .HasRequired(r => r.ModuleCours)
                 .WithMany(m => m.Ressources)
                 .HasForeignKey(r => r.ModuleCoursId)
