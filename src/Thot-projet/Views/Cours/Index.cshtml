@@ -1,31 +1,37 @@
 ﻿@model IEnumerable<Thot_projet.Models.Cours>
 @{
-    ViewBag.Title = "Cours";
+    ViewBag.Title = "Liste des cours";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Cours</h2>
 
-<p>@Html.ActionLink("Créer nouveau", "Create", null, new { @class = "btn btn-primary" })</p>
+<h2>Liste des cours</h2>
 
-<table class="table table-striped">
+<p>
+    @Html.ActionLink("Créer un nouveau cours", "Create", null, new { @class = "btn btn-success" })
+</p>
+
+<table class="table table-striped table-bordered">
     <thead>
         <tr>
-            <th>Nom</th>
-            <th>Niveau</th>
-            <th></th>
+            <th>@Html.DisplayNameFor(m => m.First().Nom)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Niveau)</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var cours in Model)
         {
             <tr>
-                <td>@item.Nom</td>
-                <td>@item.Niveau</td>
+                <td>@Html.DisplayFor(modelItem => cours.Nom)</td>
+                <td>@Html.DisplayFor(modelItem => cours.Niveau)</td>
                 <td>
-                    @Html.ActionLink("Détails", "Details", new { id = item.id }) |
-                    @Html.ActionLink("Éditer", "Edit", new { id = item.id }) |
-                    @Html.ActionLink("Supprimer", "Delete", new { id = item.id })
+                    @Html.ActionLink("Détails", "Details", new { id = cours.id }, new { @class = "btn btn-info btn-sm" }) |
+                    @Html.ActionLink("Modifier", "Edit", new { id = cours.id }, new { @class = "btn btn-warning btn-sm" }) |
+                    @Html.ActionLink("Supprimer", "Delete", new { id = cours.id }, new { @class = "btn btn-danger btn-sm" })
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<!-- Commentaire en français : Vue de la liste des cours (Index) -->

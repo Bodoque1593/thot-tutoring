@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Thot_projet.RouteConfig" Collapsed="true">
+    <Position X="1.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>App_Start\RouteConfig.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.MvcApplication" Collapsed="true">
+    <Position X="6.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Global.asax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Controllers.CoursController" Collapsed="true">
+    <Position X="8.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACARAACAAAAAAAAAAAEAAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\CoursController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Data.AppDbContext" Collapsed="true">
+    <Position X="3.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAIAAOACAAJAEAAAAAQEAAAAAAAAAIE=</HashCode>
+      <FileName>Data\AppDbContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.Abonnement" Collapsed="true">
+    <Position X="1.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAEAAAAAAACgAAAAAAAAAAgAAAQAAAAAAAAA=</HashCode>
+      <FileName>Models\Abonnement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.Cours" Collapsed="true">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQACAAAAAEAAAAAACAAoA=</HashCode>
+      <FileName>Models\Cours.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.EntreeFAQ" Collapsed="true">
+    <Position X="1.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAggAAAAEAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Models\EntreeFAQ.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.Inscription" Collapsed="true">
+    <Position X="3.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAEAAAAAAAIAAABAAAAAAAAAAAAAAAAAgAgA=</HashCode>
+      <FileName>Models\Inscription.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.ModuleCours" Collapsed="true">
+    <Position X="5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIABAAIAAAAAAAAAAAAAAAAhAgA=</HashCode>
+      <FileName>Models\ModuleCours.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.Paiement" Collapsed="true">
+    <Position X="8.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQQAEAEAAAAAAAgAAAAAAAABAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Models\Paiement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.ProfilTuteur" Collapsed="true">
+    <Position X="3.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAEAAAIAAAAAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ProfilTuteur.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.Question" Collapsed="true">
+    <Position X="5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEBAAAAAAAAIAEBMAAAAAAAAQAAAAAAAAkAgA=</HashCode>
+      <FileName>Models\Question.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.Reponse" Collapsed="true">
+    <Position X="6.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEBEAAAAAAAAAAAAAgAAAAAAAEAAAAAAQAAgA=</HashCode>
+      <FileName>Models\Reponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.Ressource" Collapsed="true">
+    <Position X="8.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAAAABAABAAAAIAAAEAQAAAAAAAgA=</HashCode>
+      <FileName>Models\Ressource.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.SessionClavardage" Collapsed="true">
+    <Position X="3.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAEAAAAAAAAACBAAgAAAAAAAAAAAAAAAEAgg=</HashCode>
+      <FileName>Models\SessionClavardage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Thot_projet.Models.Utilisateur" Collapsed="true">
+    <Position X="5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEACAAAAIAEAAAAAAAAAIAAAQEAAAAAAAAAoE=</HashCode>
+      <FileName>Models\Utilisateur.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

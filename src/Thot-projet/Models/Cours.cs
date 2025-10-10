@@ -9,7 +9,13 @@ namespace Thot_projet.Models
     public class Cours
     {
         [Key] public int id { get; set; }
+
+        [Required(ErrorMessage = "Le nom est requis")]
+        [StringLength(150, ErrorMessage = "150 caractères maximum")]
         public string Nom { get; set; }
+
+        [Required(ErrorMessage = "Le niveau est requis")]
+        [StringLength(50, ErrorMessage = "50 caractères maximum")]
         public string Niveau { get; set; }
 
 

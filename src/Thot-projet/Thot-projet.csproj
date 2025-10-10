@@ -51,6 +51,8 @@
       <HintPath>packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -96,6 +98,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Models\Thotmodel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Thotmodel.edmx</DependentUpon>
+      <LastGenOutput>Thotmodel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\Thotmodel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Thotmodel.edmx</DependentUpon>
+      <LastGenOutput>Thotmodel.cs</LastGenOutput>
+    </Content>
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -105,11 +117,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202510090141231_PremierBase.cs" />
-    <Compile Include="Migrations\202510090141231_PremierBase.Designer.cs">
-      <DependentUpon>202510090141231_PremierBase.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Abonnement.cs" />
     <Compile Include="Models\Cours.cs" />
     <Compile Include="Models\EntreeFAQ.cs" />
@@ -121,11 +128,34 @@
     <Compile Include="Models\Reponse.cs" />
     <Compile Include="Models\Ressource.cs" />
     <Compile Include="Models\SessionClavardage.cs" />
+    <Compile Include="Models\Thotmodel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Thotmodel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Thotmodel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Thotmodel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Thotmodel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Thotmodel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\Utilisateur.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
+    <Content Include="ClassDiagram1.cd" />
+    <EntityDeploy Include="Models\Thotmodel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Thotmodel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\Thotmodel.edmx.diagram">
+      <DependentUpon>Thotmodel.edmx</DependentUpon>
+    </Content>
     <None Include="packages.config" />
     <Content Include="Views\Cours\Index.cshtml" />
     <Content Include="Views\Cours\View.cshtml" />
@@ -146,9 +176,7 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202510090141231_PremierBase.resx">
-      <DependentUpon>202510090141231_PremierBase.cs</DependentUpon>
-    </EmbeddedResource>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
