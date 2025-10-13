@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Créer un cours</h2>
+<h2>Creer un cours</h2>
 
 @using (Html.BeginForm())
 {
@@ -12,10 +12,16 @@
 
     <div class="form-horizontal">
         <div class="form-group">
+
+
+
             @Html.LabelFor(model => model.Nom, new { @class = "control-label col-md-2" })
+
+
             <div class="col-md-10">
                 @Html.TextBoxFor(model => model.Nom, new { @class = "form-control", placeholder = "Nom du cours" })
                 @Html.ValidationMessageFor(model => model.Nom, "", new { @class = "text-danger" })
+
             </div>
         </div>
 
@@ -24,6 +30,7 @@
             <div class="col-md-10">
                 @Html.TextBoxFor(model => model.Niveau, new { @class = "form-control", placeholder = "Niveau du cours" })
                 @Html.ValidationMessageFor(model => model.Niveau, "", new { @class = "text-danger" })
+
             </div>
         </div>
 
@@ -36,4 +43,4 @@
     </div>
 }
 
-<!-- Commentaire en français : Vue du formulaire de création -->
+

@@ -82,7 +82,7 @@ namespace Thot_projet.Controllers
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             var cours = db.Cours.Find(id);
             if (cours == null) return HttpNotFound();
-            return View(cours); // muestra confirmacion
+            return View(cours); // muestra confirmacion de elminiacion 
         }
 
 
@@ -102,10 +102,6 @@ namespace Thot_projet.Controllers
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing) db.Dispose(); // cierra conexiones a sql
-            base.Dispose(disposing);
-        }
+       
     }
 }

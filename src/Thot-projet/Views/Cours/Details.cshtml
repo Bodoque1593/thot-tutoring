@@ -1,7 +1,7 @@
 ﻿@model Thot_projet.Models.Cours
 
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
@@ -35,8 +35,8 @@
         </dl>
     </div>
     <p>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
-        @Html.ActionLink("Back to List", "Index")
+        @Html.ActionLink("Editer", "Editer", new { id = Model.id }) |
+        @Html.ActionLink("Retourner a la liste", "Index")
     </p>
 </body>
 </html>
