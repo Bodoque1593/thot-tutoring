@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Thot_projet.Models.Ressource>
+@{
+    ViewBag.Title = "Ressources";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Ressources</h2>
+
+@if (TempData["ok"] != null)
+{
+    <div class="alert alert-success">@TempData["ok"]</div> <!-- Message de succès -->
+}
+
+<p>@Html.ActionLink("Créer une ressource", "Create", null, new { @class = "btn btn-primary" })</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Cours</th>
+            <th>Module</th>
+            <th>@Html.DisplayNameFor(m => m.First().Type)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Titre)</th>
+            <th>@Html.DisplayNameFor(m => m.First().url)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@(r.ModuleCours?.Cours != null ? r.ModuleCours.Cours.Nom : "")</td> <!-- Nom du cours -->
+                <td>@(r.ModuleCours != null ? r.ModuleCours.Numero.ToString() : "")</td>  <!-- Numéro du module -->
+                <td>@Html.DisplayFor(_ => r.Type)</td>
+                <td>@Html.DisplayFor(_ => r.Titre)</td>
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(r.url))
+                    {
+                        <a href="@r.url" target="_blank">Ouvrir</a> <!-- Lien vers la ressource -->
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Détails", "Details", new { id = r.id }) |
+                    @Html.ActionLink("Éditer", "Edit", new { id = r.id }) |
+                    @Html.ActionLink("Supprimer", "Delete", new { id = r.id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

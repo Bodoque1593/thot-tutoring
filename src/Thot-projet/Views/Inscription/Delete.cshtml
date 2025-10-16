@@ -1,0 +1,22 @@
+﻿@model Thot_projet.Models.Inscription
+@{
+    ViewBag.Title = "Supprimer l'inscription";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Supprimer</h2>
+<p>Êtes-vous sûr de vouloir supprimer cette inscription ?</p>
+
+<dl class="dl-horizontal">
+    <dt>Étudiant</dt>
+    <dd>@(Model.Utilisateur?.Nomcomplet)</dd>
+    <dt>Cours</dt>
+    <dd>@(Model.Cours?.Nom)</dd>
+</dl>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.id)
+    <input type="submit" value="Supprimer" class="btn btn-danger" />
+    @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default" })
+}

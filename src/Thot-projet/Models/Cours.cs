@@ -18,6 +18,8 @@ namespace Thot_projet.Models
         [StringLength(50, ErrorMessage = "50 caractères maximum")]
         public string Niveau { get; set; }
 
+       
+
 
         public ICollection<ModuleCours> Modules { get; set; } = new List<ModuleCours>(); // la clase de aca es el padre y estos son los hijos
         public ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();

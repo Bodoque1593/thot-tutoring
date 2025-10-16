@@ -1,0 +1,19 @@
+﻿@model Thot_projet.Models.Inscription
+@{
+    ViewBag.Title = "Détails de l'inscription";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Détails</h2>
+
+<dl class="dl-horizontal">
+    <dt>Étudiant</dt>
+    <dd>@(Model.Utilisateur?.Nomcomplet)</dd>
+    <dt>Cours</dt>
+    <dd>@(Model.Cours?.Nom)</dd>
+    <dt>Inscrit le</dt>
+    <dd>@Model.InscritLe.ToString("yyyy-MM-dd HH:mm")</dd>
+</dl>
+
+<p>
+    @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default" })
+</p>

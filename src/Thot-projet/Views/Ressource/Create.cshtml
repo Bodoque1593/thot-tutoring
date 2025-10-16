@@ -1,0 +1,55 @@
+﻿@model Thot_projet.Models.Ressource
+@{
+    ViewBag.Title = "Créer une ressource";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Créer une ressource</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken() <!-- Protection anti-CSRF -->
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" }) <!-- Résumé des erreurs -->
+
+    <div class="form-horizontal">
+        <hr />
+
+        <!-- Module de cours -->
+        <div class="form-group">
+            @Html.LabelFor(m => m.ModuleCoursId, "Module")
+            @Html.DropDownListFor(m => m.ModuleCoursId, (SelectList)ViewBag.ModuleCoursId, "-- choisissez un module --", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ModuleCoursId, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Type -->
+        <div class="form-group">
+            @Html.LabelFor(m => m.Type)
+            @Html.TextBoxFor(m => m.Type, new { @class = "form-control", placeholder = "Vidéo / PDF / Lien" })
+            @Html.ValidationMessageFor(m => m.Type, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Titre -->
+        <div class="form-group">
+            @Html.LabelFor(m => m.Titre)
+            @Html.TextBoxFor(m => m.Titre, new { @class = "form-control", placeholder = "Titre de la ressource" })
+            @Html.ValidationMessageFor(m => m.Titre, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Url -->
+        <div class="form-group">
+            @Html.LabelFor(m => m.url)
+            @Html.TextBoxFor(m => m.url, new { @class = "form-control", placeholder = "https://..." })
+            @Html.ValidationMessageFor(m => m.url, "", new { @class = "text-danger" })
+        </div>
+
+        <input type="submit" value="Enregistrer" class="btn btn-success" />
+        @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default" })
+    </div>
+}
+
+@section Scripts {
+    <!-- Validation côté client (si no usas bundles) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+}

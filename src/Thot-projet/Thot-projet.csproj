@@ -112,7 +112,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\CoursController.cs" />
+    <Compile Include="Controllers\InscriptionController.cs" />
     <Compile Include="Controllers\ModuleCoursController.cs" />
     <Compile Include="Controllers\RessourceController.cs" />
     <Compile Include="Data\AppDbContext.cs" />
@@ -123,6 +125,7 @@
     <Compile Include="Models\Cours.cs" />
     <Compile Include="Models\EntreeFAQ.cs" />
     <Compile Include="Models\Inscription.cs" />
+    <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\ModuleCours.cs" />
     <Compile Include="Models\Paiement.cs" />
     <Compile Include="Models\ProfilTuteur.cs" />
@@ -172,6 +175,16 @@
     <Content Include="Views\ModuleCours\Edit.cshtml" />
     <Content Include="Views\ModuleCours\Details.cshtml" />
     <Content Include="Views\ModuleCours\Delete.cshtml" />
+    <Content Include="Views\Ressource\Index.cshtml" />
+    <Content Include="Views\Ressource\Create.cshtml" />
+    <Content Include="Views\Ressource\Edit.cshtml" />
+    <Content Include="Views\Ressource\Details.cshtml" />
+    <Content Include="Views\Ressource\View.cshtml" />
+    <Content Include="Views\Inscription\Index.cshtml" />
+    <Content Include="Views\Inscription\Create.cshtml" />
+    <Content Include="Views\Inscription\Details.cshtml" />
+    <Content Include="Views\Inscription\Delete.cshtml" />
+    <Content Include="Views\Auth\Login.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -181,7 +194,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Ressource\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

@@ -11,9 +11,14 @@ namespace Thot_projet.Models
     {
 
         [Key] public int id { get; set; }
+        [Required(ErrorMessage = "L'etudiant est requis")]
         public int EtudiantId { get; set; }
+        [Required(ErrorMessage = "Le cours est requis")]
         public int CoursId { get; set; }
+        [Required(ErrorMessage = "La ressource est requise")]
         public int RessourceId { get; set; }
+        [Required(ErrorMessage = "Le contenu est requis")]
+        [StringLength(2000,ErrorMessage ="2000 caracteres max")]
         public string Contenu { get; set; }
         public bool EstResolvee { get; set; }
         public DateTime Creele { get; set; }

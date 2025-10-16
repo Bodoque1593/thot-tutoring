@@ -1,0 +1,47 @@
+﻿@model Thot_projet.Models.LoginViewModel
+@{
+    ViewBag.Title = "Connexion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Connexion</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email)
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "exemple@thot.com" })
+        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Motdepasse)
+        @Html.PasswordFor(m => m.Motdepasse, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Motdepasse, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Role)
+        @Html.DropDownListFor(m => m.Role,
+            new SelectList(new[] { "Etudiant", "Tuteur" }),
+            "-- choisissez votre rôle --",
+            new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="checkbox">
+        <label>
+            @Html.CheckBoxFor(m => m.Mesouvenir) @Html.DisplayNameFor(m => m.Mesouvenir)
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Se connecter</button>
+}
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+}

@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Thot_projet.Models.Inscription>
+@{
+    ViewBag.Title = "Inscriptions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Inscriptions</h2>
+
+@if (TempData["ok"] != null)
+{
+    <div class="alert alert-success">@TempData["ok"]</div> <!-- Message de succès -->
+}
+
+<p>@Html.ActionLink("Créer une inscription", "Create", null, new { @class = "btn btn-primary" })</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Étudiant</th>
+            <th>Cours</th>
+            <th>Inscrit le</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>@(i.Utilisateur?.Nomcomplet)</td>
+                <td>@(i.Cours?.Nom)</td>
+                <td>@i.InscritLe.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>
+                    @Html.ActionLink("Détails", "Details", new { id = i.id }) |
+                    @Html.ActionLink("Supprimer", "Delete", new { id = i.id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

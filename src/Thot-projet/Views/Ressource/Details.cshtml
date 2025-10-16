@@ -1,0 +1,34 @@
+﻿@model Thot_projet.Models.Ressource
+@{
+    ViewBag.Title = "Détails de la ressource";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Détails</h2>
+
+<dl class="dl-horizontal">
+    <dt>Cours</dt>
+    <dd>@(Model.ModuleCours?.Cours != null ? Model.ModuleCours.Cours.Nom : "")</dd>
+
+    <dt>Module</dt>
+    <dd>@(Model.ModuleCours != null ? Model.ModuleCours.Numero.ToString() : "")</dd>
+
+    <dt>Type</dt>
+    <dd>@Model.Type</dd>
+
+    <dt>Titre</dt>
+    <dd>@Model.Titre</dd>
+
+    <dt>Url</dt>
+    <dd>
+        @if (!string.IsNullOrWhiteSpace(Model.url))
+        {
+            <a href="@Model.url" target="_blank">@Model.url</a>
+        }
+    </dd>
+</dl>
+
+<p>
+    @Html.ActionLink("Éditer", "Edit", new { id = Model.id }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default" })
+</p>
