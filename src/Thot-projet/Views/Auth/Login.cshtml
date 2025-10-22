@@ -6,29 +6,37 @@
 
 <h2>Connexion</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Login", "Auth", FormMethod.Post, new { @class = "form", role = "form" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
     <div class="form-group">
         @Html.LabelFor(m => m.Email)
-        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "exemple@thot.com" })
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "exemple@thot.com", autofocus = "autofocus" })
         @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
     </div>
 
     <div class="form-group">
         @Html.LabelFor(m => m.Motdepasse)
-        @Html.PasswordFor(m => m.Motdepasse, new { @class = "form-control" })
+        @Html.PasswordFor(m => m.Motdepasse, new { @class = "form-control", id = "pwd", placeholder = "Mot de passe" })
         @Html.ValidationMessageFor(m => m.Motdepasse, "", new { @class = "text-danger" })
+
+        <div class="btn-group" style="margin-top:8px;">
+            <button type="button" id="btnGenLocal" class="btn btn-default">Générer un mot de passe</button>
+            <button type="button" id="btnToggle" class="btn btn-default">Afficher/Masquer</button>
+        </div>
+        <small class="help-block">Un mot de passe aléatoire peut être généré localement.</small>
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(m => m.Role)
-        @Html.DropDownListFor(m => m.Role,
+        @Html.LabelFor(m => m.Role, "Rôle")
+        @Html.DropDownListFor(
+            m => m.Role,
             new SelectList(new[] { "Etudiant", "Tuteur" }),
             "-- choisissez votre rôle --",
-            new { @class = "form-control" })
+            new { @class = "form-control" }
+        )
         @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
     </div>
 
@@ -40,7 +48,36 @@
 
     <button type="submit" class="btn btn-primary">Se connecter</button>
 }
+
 @section Scripts {
+    <script>
+        (function () {
+            // --- Générateur local de mot de passe sécurisé ---
+            function genLocal(len) {
+                // \u0040 = caractère  (se utiliza para evitar error Razor)
+                var chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!\u0040#$%*-_"
+                var out = "";
+                for (var i = 0; i < len; i++) {
+                    out += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return out;
+            }
+
+            var pwd = document.getElementById("pwd");
+
+            // Générer un mot de passe aléatoire
+            document.getElementById("btnGenLocal").addEventListener("click", function () {
+                pwd.value = genLocal(12);
+            });
+
+            // Afficher ou masquer le mot de passe
+            document.getElementById("btnToggle").addEventListener("click", function () {
+                pwd.type = (pwd.type === "password" ? "text" : "password");
+            });
+        })();
+    </script>
+
+    <!-- Scripts de validation unobtrusive (si no están ya en _Layout) -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
