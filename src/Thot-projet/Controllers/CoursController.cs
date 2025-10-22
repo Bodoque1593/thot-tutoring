@@ -1,107 +1,90 @@
-﻿using System.Linq;
+﻿using System.Data.Entity;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using Thot_projet.Data;
+using Thot_projet.Infrastructure;
 using Thot_projet.Models;
 
 namespace Thot_projet.Controllers
 {
+   
+    [RoleAuthorize("Tuteur", "Etudiant")]
     public class CoursController : Controller
     {
         private readonly AppDbContext db = new AppDbContext();
 
-        // GET: /Cours
+        // GET: Cours
         public ActionResult Index()
         {
-            var items = db.Cours.OrderBy(c => c.Nom).ToList();
-            return View(items);
-        }
-
-        // GET: /Cours/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var cours = db.Cours.Find(id);
-
-
-            if (cours == null) return HttpNotFound();
+            var cours = db.Cours.OrderBy(c => c.Nom).ToList();
             return View(cours);
         }
 
-        // GET: /Cours/Create
-        public ActionResult Create() => View();// formulario vacio
+    
+        [RoleAuthorize("Tuteur")]
+        public ActionResult Create()
+        {
+            return View();
+        }
 
-
-
-
-        // POST: /Cours/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "id,Nom,Niveau")] Cours cours) // llena el objeto cours con los datos del formulario
+        [RoleAuthorize("Tuteur")]
+        public ActionResult Create([Bind(Include = "Nom,Niveau")] Cours cours)
         {
-            if (ModelState.IsValid)
-            {
-                db.Cours.Add(cours);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(cours);
+            if (!ModelState.IsValid) return View(cours);
+            db.Cours.Add(cours);
+            db.SaveChanges();
+            TempData["ok"] = "Cours créé.";
+            return RedirectToAction("Index");
         }
 
-
-
-
-        // GET: /Cours/Edit/5
+        [RoleAuthorize("Tuteur")]
         public ActionResult Edit(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var cours = db.Cours.Find(id);
-            if (cours == null) return HttpNotFound();
-            return View(cours); //precarga el objeto
+            var c = db.Cours.Find(id);
+            if (c == null) return HttpNotFound();
+            return View(c);
         }
-
-        // POST: /Cours/Edit/5
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [RoleAuthorize("Tuteur")]
         public ActionResult Edit([Bind(Include = "id,Nom,Niveau")] Cours cours)
         {
-            if (ModelState.IsValid)
-            {
-                db.Entry(cours).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(cours);
+            if (!ModelState.IsValid) return View(cours);
+            db.Entry(cours).State = EntityState.Modified;
+            db.SaveChanges();
+            TempData["ok"] = "Cours modifié.";
+            return RedirectToAction("Index");
         }
 
-        // GET: /Cours/Delete/5
+        [RoleAuthorize("Tuteur")]
         public ActionResult Delete(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var cours = db.Cours.Find(id);
-            if (cours == null) return HttpNotFound();
-            return View(cours); // muestra confirmacion de elminiacion 
+            var c = db.Cours.Find(id);
+            if (c == null) return HttpNotFound();
+            return View(c);
         }
 
-
-        // POST: /Cours/Delete/5
-        [HttpPost, ActionName("Delete")]    // el metodo es DeleteConfirmed pero la ruta post es Delete  
-
-
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)   
+        [RoleAuthorize("Tuteur")]
+        public ActionResult DeleteConfirmed(int id)
         {
-            var cours = db.Cours.Find(id);
-            if (cours != null)
+            var c = db.Cours.Find(id);
+            if (c != null)
             {
-                db.Cours.Remove(cours);
+                db.Cours.Remove(c);
                 db.SaveChanges();
+                TempData["ok"] = "Cours supprimé.";
             }
             return RedirectToAction("Index");
         }
 
-       
+     
     }
 }

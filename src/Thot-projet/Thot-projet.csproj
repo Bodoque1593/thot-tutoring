@@ -114,15 +114,19 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\CoursController.cs" />
+    <Compile Include="Controllers\EtudiantController.cs" />
     <Compile Include="Controllers\InscriptionController.cs" />
     <Compile Include="Controllers\ModuleCoursController.cs" />
     <Compile Include="Controllers\RessourceController.cs" />
+    <Compile Include="Controllers\TuteurController.cs" />
     <Compile Include="Data\AppDbContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\RoleAuthorizeAttribute.cs" />
     <Compile Include="Models\Abonnement.cs" />
     <Compile Include="Models\Cours.cs" />
+    <Compile Include="Models\Dashboards.cs" />
     <Compile Include="Models\EntreeFAQ.cs" />
     <Compile Include="Models\Inscription.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
@@ -130,6 +134,7 @@
     <Compile Include="Models\Paiement.cs" />
     <Compile Include="Models\ProfilTuteur.cs" />
     <Compile Include="Models\Question.cs" />
+    <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\Reponse.cs" />
     <Compile Include="Models\Ressource.cs" />
     <Compile Include="Models\SessionClavardage.cs" />
@@ -185,6 +190,10 @@
     <Content Include="Views\Inscription\Details.cshtml" />
     <Content Include="Views\Inscription\Delete.cshtml" />
     <Content Include="Views\Auth\Login.cshtml" />
+    <Content Include="Views\Auth\Register.cshtml" />
+    <Content Include="Views\Tuteur\Dashboard.cshtml" />
+    <Content Include="Views\Etudiant\Dashboard.cshtml" />
+    <Content Include="Views\Inscription\Browse.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

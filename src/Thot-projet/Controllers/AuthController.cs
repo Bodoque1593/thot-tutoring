@@ -13,29 +13,29 @@ namespace Thot_projet.Controllers
     {
         private readonly AppDbContext db = new AppDbContext();
 
-        // Générateur crypto-sûr côté serveur
-        private static string GenererMotDePasse(int longueur = 12)
+        private static string GenererMotDePasse(int longueur = 12) // just 12
         {
             const string alpha = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
             const string digits = "23456789";
             const string symbols = "!@#$%*-_";
-
             string alphabet = alpha + digits + symbols;
 
             var bytes = new byte[longueur];
-            using (var rng = RandomNumberGenerator.Create())
+            using (var rng = RandomNumberGenerator.Create()) // OJO
                 rng.GetBytes(bytes);
 
+            //---------ojo---------
+
             var sb = new StringBuilder(longueur);
+
             for (int i = 0; i < longueur; i++)
-            {
-                int index = bytes[i] % alphabet.Length;
-                sb.Append(alphabet[index]);
-            }
+                sb.Append(alphabet[bytes[i] % alphabet.Length]);
             return sb.ToString();
         }
 
-        // GET: /Auth/Login
+     
+
+
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
@@ -43,10 +43,15 @@ namespace Thot_projet.Controllers
             return View(new LoginViewModel());
         }
 
-        // POST: /Auth/Login
+
+
+
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+
+
         public ActionResult Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid) return View(model);
@@ -57,7 +62,6 @@ namespace Thot_projet.Controllers
 
             var user = db.Utilisateurs.FirstOrDefault(u => u.Email.ToLower() == email);
 
-            // Vérifie utilisateur / mot de passe / rôle
             if (user == null)
             {
                 ModelState.AddModelError("", "Utilisateur inexistant.");
@@ -73,24 +77,77 @@ namespace Thot_projet.Controllers
 
             if (!string.Equals(user.Role ?? "", role, StringComparison.OrdinalIgnoreCase))
             {
-                ModelState.AddModelError("", "Rôle incorrect pour cet utilisateur.");
+                ModelState.AddModelError("", "Role incorrect pour cet utilisateur.");
                 return View(model);
             }
-
+            //---------------------------------------
             FormsAuthentication.SetAuthCookie(user.Email, model.Mesouvenir);
-
             Session["UserId"] = user.id;
-            Session["UserRole"] = user.Role; // "Tuteur" | "Etudiant"
+            Session["UserRole"] = user.Role; 
             Session["UserName"] = string.IsNullOrWhiteSpace(user.Nomcomplet) ? user.Email : user.Nomcomplet;
 
+            // Redireccion
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
 
-            return RedirectToAction("Index", "Cours");
+            if (string.Equals(user.Role ?? "", "Tuteur", StringComparison.OrdinalIgnoreCase))
+                return RedirectToAction("Dashboard", "Tuteur");
+
+            return RedirectToAction("Dashboard", "Etudiant");
         }
 
-        // POST: /Auth/GenererMdp
-        // Génère et enregistre un mot de passe pour l'utilisateur (ex: 1ère connexion)
+      
+        [AllowAnonymous]
+        public ActionResult Register()
+        {
+            return View(new RegisterViewModel());
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+
+
+
+        public ActionResult Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var email = (model.Email ?? "").Trim().ToLower();
+
+            var existe = db.Utilisateurs.Any(u => u.Email.ToLower() == email);
+            if (existe)
+            {
+                ModelState.AddModelError("Email", "Ce courriel est déja utilisé.");
+                return View(model);
+            }
+
+            var user = new Utilisateur
+            {
+                Email = email,
+                Nomcomplet = (model.Nomcomplet ?? "").Trim(),
+                Role = (model.Role ?? "").Trim(),
+                Motdepasse = (model.Motdepasse ?? "").Trim(),  // Texto plano 
+                Creele = DateTime.UtcNow
+            };
+
+            db.Utilisateurs.Add(user);
+            db.SaveChanges();
+
+            // Autologin tras registro
+            FormsAuthentication.SetAuthCookie(user.Email, false);
+            Session["UserId"] = user.id;
+            Session["UserRole"] = user.Role;
+            Session["UserName"] = string.IsNullOrWhiteSpace(user.Nomcomplet) ? user.Email : user.Nomcomplet;
+
+            // Redirige  dashboard
+            if (string.Equals(user.Role ?? "", "Tuteur", StringComparison.OrdinalIgnoreCase))
+                return RedirectToAction("Dashboard", "Tuteur");
+
+            return RedirectToAction("Dashboard", "Etudiant");
+        }
+
+        //Reset de clave para admin/primer uso
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -117,13 +174,11 @@ namespace Thot_projet.Controllers
             db.SaveChanges();
 
             TempData["ok"] = $"Mot de passe généré pour {user.Email}.";
-            TempData["mdp"] = nouveau; // On l’affiche une seule fois
-
-            // Pré-remplit l’email/role à l’écran de login
-            return RedirectToAction("Login", new { returnUrl = "" });
+            TempData["mdp"] = nouveau; // se muestra una sola vez
+            return RedirectToAction("Login");
         }
 
-        // GET: /Auth/Logout
+
         [Authorize]
         public ActionResult Logout()
         {
