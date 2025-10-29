@@ -1,0 +1,78 @@
+﻿using System;
+using System.Data.Entity;
+using System.Linq;
+using System.Web.Mvc;
+using Thot_projet.Data;
+using Thot_projet.Infrastructure;
+using Thot_projet.Models;
+
+namespace Thot_projet.Controllers
+{
+    [RoleAuthorize("Etudiant", "Tuteur")]
+    public class PaiementController : Controller
+    {
+        private readonly AppDbContext db = new AppDbContext();
+
+        public ActionResult Index()
+        {
+            int uid = (int)(Session["UserId"] ?? 0);
+            string role = Convert.ToString(Session["UserRole"] ?? "");
+
+            var q = db.Paiements.Include(p => p.Utilisateur).OrderByDescending(p => p.PayeLe);
+
+            if (string.Equals(role, "Etudiant", StringComparison.OrdinalIgnoreCase))
+                return View("Index_Etudiant", q.Where(p => p.UtilisateurId == uid).ToList());
+            else
+                return View("Index_Tuteur", q.ToList());
+        }
+
+        // Crear registro de pago (simulado) – solo estudiante
+        [RoleAuthorize("Etudiant")]
+        public ActionResult Create()
+        {
+            ViewBag.Monnaies = new[] { "CAD", "USD", "EUR" };
+            ViewBag.Statuts = new[] { "Payé", "En attente", "Annulé" };
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [RoleAuthorize("Etudiant")]
+        public ActionResult Create(decimal Montant, string Monnaie, string Statut)
+        {
+            int uid = (int)(Session["UserId"] ?? 0);
+
+            if (Montant <= 0) ModelState.AddModelError("Montant", "Le montant doit être > 0.");
+            if (string.IsNullOrWhiteSpace(Monnaie)) ModelState.AddModelError("Monnaie", "La monnaie est requise.");
+            if (string.IsNullOrWhiteSpace(Statut)) ModelState.AddModelError("Statut", "Le statut est requis.");
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Monnaies = new[] { "CAD", "USD", "EUR" };
+                ViewBag.Statuts = new[] { "Payé", "En attente", "Annulé" };
+                return View();
+            }
+
+            var p = new Paiement
+            {
+                UtilisateurId = uid,
+                Montant = Montant,
+                Monnaie = Monnaie.Trim(),
+                Statut = Statut.Trim(),
+                PayeLe = DateTime.UtcNow
+            };
+
+            db.Paiements.Add(p);
+            db.SaveChanges();
+
+            TempData["ok"] = "Paiement enregistré.";
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) db.Dispose();
+            base.Dispose(disposing);
+        }
+    }
+}

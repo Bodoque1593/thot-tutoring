@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Thot_projet.Models.Paiement>
+
+@{
+    ViewBag.Title = "Tous les paiements";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Tous les paiements</h2>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Utilisateur</th>
+            <th>Montant</th>
+            <th>Monnaie</th>
+            <th>Statut</th>
+            <th>Payé le</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@(p.Utilisateur?.Nomcomplet ?? p.Utilisateur?.Email ?? "-")</td>
+                <td>@p.Montant.ToString("0.00")</td>
+                <td>@p.Monnaie</td>
+                <td>@p.Statut</td>
+                <td>@p.PayeLe.ToString("yyyy-MM-dd HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>

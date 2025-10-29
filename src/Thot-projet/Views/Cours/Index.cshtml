@@ -2,36 +2,37 @@
 @{
     ViewBag.Title = "Liste des cours";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var role = Convert.ToString(Session["UserRole"] ?? "");
+    var isTuteur = string.Equals(role, "Tuteur", StringComparison.OrdinalIgnoreCase);
 }
-
 <h2>Liste des cours</h2>
 
-<p>
-    @Html.ActionLink("Créer un nouveau cours", "Create", null, new { @class = "btn btn-success" })
-</p>
+@if (isTuteur)
+{
+    <p>@Html.ActionLink("Créer un nouveau cours", "Create", null, new { @class = "btn btn-success" })</p>
+}
 
 <table class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(m => m.First().Nom)</th>
-            <th>@Html.DisplayNameFor(m => m.First().Niveau)</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
+    <thead><tr><th>Nom</th><th>Niveau</th><th>Actions</th></tr></thead>
     <tbody>
-        @foreach (var cours in Model)
+        @foreach (var c in Model)
         {
             <tr>
-                <td>@Html.DisplayFor(modelItem => cours.Nom)</td>
-                <td>@Html.DisplayFor(modelItem => cours.Niveau)</td>
+                <td>@c.Nom</td>
+                <td>@c.Niveau</td>
                 <td>
-                    @Html.ActionLink("Détails", "Details", new { id = cours.id }, new { @class = "btn btn-info btn-sm" }) |
-                    @Html.ActionLink("Modifier", "Edit", new { id = cours.id }, new { @class = "btn btn-warning btn-sm" }) |
-                    @Html.ActionLink("Supprimer", "Delete", new { id = cours.id }, new { @class = "btn btn-danger btn-sm" })
+                    @if (isTuteur)
+                    {
+                        @Html.ActionLink("Détails", "Details", new { id = c.id }, new { @class = "btn btn-info btn-xs" }) @: |
+                        @Html.ActionLink("Modifier", "Edit", new { id = c.id }, new { @class = "btn btn-warning btn-xs" }) @: |
+                        @Html.ActionLink("Supprimer", "Delete", new { id = c.id }, new { @class = "btn btn-danger btn-xs" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Voir", "Details", new { id = c.id }, new { @class = "btn btn-default btn-xs" })
+                    }
                 </td>
             </tr>
         }
     </tbody>
 </table>
-
-

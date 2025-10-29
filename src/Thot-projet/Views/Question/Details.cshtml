@@ -1,0 +1,67 @@
+﻿@model Thot_projet.Models.Question
+@{
+    ViewBag.Title = "Détails de la question";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var role = Convert.ToString(Session["UserRole"] ?? "");
+    var isTuteur = string.Equals(role, "Tuteur", StringComparison.OrdinalIgnoreCase);
+}
+<h2>Question</h2>
+
+<dl class="dl-horizontal">
+    <dt>Étudiant</dt>
+    <dd>@(Model.Etudiant?.Nomcomplet ?? Model.Etudiant?.Email ?? "-")</dd>
+    <dt>Cours</dt>
+    <dd>@(Model.Cours?.Nom ?? "-")</dd>
+    <dt>Ressource</dt>
+    <dd>@(Model.Ressource?.Titre ?? "-")</dd>
+    <dt>Créée le</dt>
+    <dd>@Model.Creele.ToString("yyyy-MM-dd HH:mm")</dd>
+    <dt>État</dt>
+    <dd>@(Model.EstResolvee ? "Résolue" : "Ouverte")</dd>
+</dl>
+
+<h3>Contenu</h3>
+<p>@Model.Contenu</p>
+
+<h3>Réponses</h3>
+@if (!Model.Reponses.Any())
+{
+    <p><em>Pas de réponses pour l'instant.</em></p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var r in Model.Reponses.OrderByDescending(x => x.Creele))
+        {
+            <li class="list-group-item">
+                <strong>@(r.Tuteur?.Nomcomplet ?? r.Tuteur?.Email ?? "Tuteur")</strong>
+                <span class="text-muted"> (@r.Creele.ToString("yyyy-MM-dd HH:mm"))</span>
+                <div style="margin-top:5px">@r.Contenu</div>
+            </li>
+        }
+    </ul>
+}
+
+@if (isTuteur)
+{
+    <h3>Ajouter une réponse</h3>
+    @using (Html.BeginForm("Repondre", "Question", FormMethod.Post, new { @class = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("questionId", Model.id)
+        <div class="form-group">
+            <textarea name="contenu" class="form-control" rows="4" placeholder="Votre réponse..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Répondre</button>
+    }
+
+    @if (!Model.EstResolvee)
+    {
+        @using (Html.BeginForm("MarquerResolue", "Question", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("questionId", Model.id)
+            <button type="submit" class="btn btn-default" style="margin-top:8px;">Marquer comme résolue</button>
+        }
+    }
+}

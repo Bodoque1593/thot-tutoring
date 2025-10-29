@@ -8,78 +8,77 @@ using Thot_projet.Models;
 
 namespace Thot_projet.Controllers
 {
-   
+
     [RoleAuthorize("Etudiant")]
     public class InscriptionController : Controller
     {
         private readonly AppDbContext db = new AppDbContext();
 
-        
-        public ActionResult Index()
-        {
-            int uid = (int)(Session["UserId"] ?? 0);
+        private bool IsEtudiant()
+            => string.Equals(Convert.ToString(Session["UserRole"]), "Etudiant", StringComparison.OrdinalIgnoreCase);
 
-            var mes = db.Inscriptions.Include(i => i.Cours).Where(i => i.UtilisateurId == uid).OrderByDescending(i => i.InscritLe).ToList();
-            return View(mes);
+        private int? CurrentUserId()
+        {
+            return Session["UserId"] as int?;
         }
 
-        
+        /// GET: /Inscription/Browse
+        [HttpGet]
         public ActionResult Browse()
         {
-            int uid = (int)(Session["UserId"] ?? 0);
+            // Solo estudiantes autenticados
+            var uid = CurrentUserId();
+            if (uid == null || !IsEtudiant())
+                return RedirectToAction("Login", "Auth");
 
-            var inscrits = db.Inscriptions.Where(i => i.UtilisateurId == uid).Select(i => i.CoursId).ToList();
+            var myCourseIds = db.Inscriptions
+                                .Where(i => i.UtilisateurId == uid.Value)
+                                .Select(i => i.CoursId)
+                                .ToList();
 
-            var vm = db.Cours.OrderBy(c => c.Nom).Select(c => new BrowseCoursVM
-                       {CoursId = c.id,Nom = c.Nom, Niveau = c.Niveau,DejaInscrit = inscrits.Contains(c.id)}).ToList();
+            var vms = db.Cours
+                .Select(c => new InscriptionBrowseVM
+                {
+                    CoursId = c.id,
+                    Nom = c.Nom,
+                    Niveau = c.Niveau,
+                    DejaInscrit = myCourseIds.Contains(c.id)
+                })
+                .OrderBy(x => x.Nom)
+                .ToList();
 
-            return View(vm);
+            return View(vms); // Views/Inscription/Browse.cshtml
         }
 
-       
+        /// POST: /Inscription/Enroll
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Enroll(int coursId)
         {
-            int uid = (int)(Session["UserId"] ?? 0);
+            var uid = CurrentUserId();
+            if (uid == null || !IsEtudiant())
+                return RedirectToAction("Login", "Auth");
 
-            // inscrito
-            bool existe = db.Inscriptions.Any(i => i.UtilisateurId == uid && i.CoursId == coursId);
-            if (existe)
+            bool exists = db.Inscriptions.Any(i => i.UtilisateurId == uid.Value && i.CoursId == coursId);
+            if (!exists)
+            {
+                db.Inscriptions.Add(new Inscription
+                {
+                    UtilisateurId = uid.Value,
+                    CoursId = coursId,
+                    InscritLe = DateTime.Now
+                });
+                db.SaveChanges();
+                TempData["ok"] = "Inscription réussie.";
+            }
+            else
             {
                 TempData["err"] = "Vous êtes déjà inscrit à ce cours.";
-                return RedirectToAction("Browse");
             }
 
-            
-            var cours = db.Cours.Find(coursId);
-            if (cours == null)
-            {
-                TempData["err"] = "Cours introuvable.";
-                return RedirectToAction("Browse");
-            }
-
-            var ins = new Inscription
-            {
-                UtilisateurId = uid,CoursId = coursId,InscritLe = DateTime.UtcNow
-            };
-
-            db.Inscriptions.Add(ins);
-            db.SaveChanges();
-
-            TempData["ok"] = "Inscription réussie.";
-            return RedirectToAction("Index");
+            // Si prefieres llevarlo a Mes cours:
+            return RedirectToAction("Index"); // tu vista de "Mes cours"
+                                              // O, si luego conectas pago: return RedirectToAction("Create","Paiement", new { coursId });
         }
-
-     
     }
-
-    // VM local para Browse
-    public class BrowseCoursVM
-    {
-        public int CoursId { get; set; }
-        public string Nom { get; set; }
-        public string Niveau { get; set; }
-        public bool DejaInscrit { get; set; }
     }
-}

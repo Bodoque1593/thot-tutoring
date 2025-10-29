@@ -1,4 +1,8 @@
-﻿@using System
+﻿@{
+    var isAuth = Request.IsAuthenticated;
+    var role = Convert.ToString(Session["UserRole"] ?? "");
+    var userName = Convert.ToString(Session["UserName"] ?? "");
+}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,76 +11,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" />
     <style>
-        body {
-            padding-top: 70px;
-        }
-
-        .navbar-brand {
-            font-weight: 600;
-        }
-
-        .footer {
-            margin-top: 40px;
-            color: #777;
-        }
-
-        .alert + .alert {
-            margin-top: 10px;
-        }
-
-        code.copyable {
-            cursor: pointer;
-        }
+  body{ padding-top:88px; } 
+  /* subimos un poco */
+  }{ body{ padding-top:118px; } } /* collapses */
+  .navbar-brand{ font-weight:600; }
+  .footer{ margin-top:40px; color:#777; }
+  .alert + .alert{ margin-top:10px; }
+  code.copyable{ cursor:pointer; }
+  /* seguridad extra, por si alguna vista mete contenedor sin margen */
+  .navbar-fixed-top + .container{ padding-top:10px; }
     </style>
+
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#thot-navbar" aria-expanded="false">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#thot-navbar">
                     <span class="sr-only">Basculer la navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Thot", "Index", "Cours", null, new { @class = "navbar-brand" })
+                @if (isAuth)
+                {
+                    @Html.ActionLink("Thot", "Index", "Cours", null, new { @class = "navbar-brand" })
+                }
+                else
+                {
+                    @Html.ActionLink("Thot", "Login", "Auth", null, new { @class = "navbar-brand" })
+                }
             </div>
 
             <div class="collapse navbar-collapse" id="thot-navbar">
-                <ul class="nav navbar-nav">
-            
-                    <li>@Html.ActionLink("Cours", "Index", "Cours")</li>
-                    <li>@Html.ActionLink("Modules", "Index", "ModuleCours")</li>
-                    <li>@Html.ActionLink("Ressources", "Index", "Ressource")</li>
+                @if (isAuth)
+                {
+                    <ul class="nav navbar-nav">
+                        @* Orden útil para los dos roles *@
+                        <li>@Html.ActionLink("Cours", "Index", "Cours")</li>
+                        <li>@Html.ActionLink("Modules", "Index", "ModuleCours")</li>
+                        <li>@Html.ActionLink("Ressources", "Index", "Ressource")</li>
+                        <li>@Html.ActionLink("FAQ", "Index", "EntreeFAQ")</li>
+                        <li>@Html.ActionLink("Questions", "Index", "Question")</li>
 
-                 
-                    @if (Request.IsAuthenticated && Convert.ToString(Session["UserRole"]) == "Tuteur")
-                    {
-                        <li>@Html.ActionLink("Mon tableau (Tuteur)", "Dashboard", "Tuteur")</li>
-                 
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Gérer <span class="caret"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li>@Html.ActionLink("Gérer les cours", "Index", "Cours")</li>
-                                <li>@Html.ActionLink("Gérer les modules", "Index", "ModuleCours")</li>
-                                <li>@Html.ActionLink("Gérer les ressources", "Index", "Ressource")</li>
-                            </ul>
-                        </li>
-                    }
-
-            
-                    @if (Request.IsAuthenticated && Convert.ToString(Session["UserRole"]) == "Etudiant")
-                    {
-                        <li>@Html.ActionLink("Mon espace (Étudiant)", "Dashboard", "Etudiant")</li>
-                        <li>@Html.ActionLink("S'inscrire à un cours", "Browse", "Inscription")</li>
-                        <li>@Html.ActionLink("Mes cours", "Index", "Inscription")</li>
-                    }
-                </ul>
+                        @if (string.Equals(role, "Etudiant", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <li>@Html.ActionLink("Mon espace (Étudiant)", "Dashboard", "Etudiant")</li>
+                            <li>@Html.ActionLink("S'inscrire à un cours", "Browse", "Inscription")</li>
+                            <li>@Html.ActionLink("Mes cours", "Index", "Inscription")</li>
+                            <li>@Html.ActionLink("Mes paiements", "Index", "Paiement")</li>
+                        }
+                        else if (string.Equals(role, "Tuteur", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <li>@Html.ActionLink("Mon tableau (Tuteur)", "Dashboard", "Tuteur")</li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Gérer <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li>@Html.ActionLink("Gérer les cours", "Index", "Cours")</li>
+                                    <li>@Html.ActionLink("Gérer les modules", "Index", "ModuleCours")</li>
+                                    <li>@Html.ActionLink("Gérer les ressources", "Index", "Ressource")</li>
+                                    <li class="divider"></li>
+                                    <li>@Html.ActionLink("Paiements (tous)", "Index", "Paiement")</li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                }
 
                 <ul class="nav navbar-nav navbar-right">
-                    @if (Request.IsAuthenticated)
+                    @if (isAuth)
                     {
-                        <li class="navbar-text">Bonjour, @Convert.ToString(Session["UserName"])</li>
+                        <li class="navbar-text">Bonjour, @userName</li>
                         <li>@Html.ActionLink("Déconnexion", "Logout", "Auth")</li>
                     }
                     else
@@ -92,47 +95,33 @@
     <div class="container body-content">
         @if (TempData["ok"] != null)
         {
-            <div class="alert alert-success" role="alert">
-                <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
-                @TempData["ok"]
-            </div>
+            <div class="alert alert-success"><span class="glyphicon glyphicon-ok-sign"></span> @TempData["ok"]</div>
         }
         @if (TempData["err"] != null)
         {
-            <div class="alert alert-danger" role="alert">
-                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                @TempData["err"]
-            </div>
+            <div class="alert alert-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> @TempData["err"]</div>
         }
         @if (TempData["mdp"] != null)
         {
-            <div class="alert alert-info" role="alert">
-                <strong>Nouveau mot de passe :</strong>
-                <code class="copyable" title="Cliquer pour copier">@TempData["mdp"]</code>
+            <div class="alert alert-info">
+                <strong>Nouveau mot de passe :</strong> <code class="copyable" title="Cliquer pour copier">@TempData["mdp"]</code>
                 <span class="help-block" style="margin:5px 0 0">Conservez-le en lieu sûr. Il ne s’affichera qu’une seule fois.</span>
             </div>
         }
 
         @RenderBody()
-
         <hr />
-        <footer class="footer">
-            <p>&copy; @DateTime.Now.Year - Thot Projet</p>
-        </footer>
+        <footer class="footer"><p>&copy; @DateTime.Now.Year - Thot Projet</p></footer>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
     <script>
         (function () {
-            var el = document.querySelector("code.copyable");
-            if (!el) return;
+            var el = document.querySelector("code.copyable"); if (!el) return;
             el.addEventListener("click", function () {
-                var r = document.createRange();
-                r.selectNode(el);
-                var sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(r);
+                var r = document.createRange(); r.selectNode(el);
+                var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
                 try { document.execCommand("copy"); sel.removeAllRanges(); el.title = "Copié !"; } catch (e) { }
             });
         })();

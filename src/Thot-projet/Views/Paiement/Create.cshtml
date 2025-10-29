@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Nouveau paiement";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Nouveau paiement</h2>
+
+@using (Html.BeginForm("Create", "Paiement", FormMethod.Post, new { @class = "form", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        <label>Montant</label>
+        <input type="number" name="Montant" step="0.01" class="form-control" />
+        @Html.ValidationMessage("Montant", "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label>Monnaie</label>
+        <select name="Monnaie" class="form-control">
+            @foreach (var m in (string[])ViewBag.Monnaies)
+            {
+                <option>@m</option>
+}
+        </select>
+        @Html.ValidationMessage("Monnaie", "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label>Statut</label>
+        <select name="Statut" class="form-control">
+            @foreach (var s in (string[])ViewBag.Statuts)
+            {
+                <option>@s</option>
+}
+        </select>
+        @Html.ValidationMessage("Statut", "", new { @class = "text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+}

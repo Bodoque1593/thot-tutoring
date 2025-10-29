@@ -114,9 +114,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\CoursController.cs" />
+    <Compile Include="Controllers\EntreeFAQController.cs" />
     <Compile Include="Controllers\EtudiantController.cs" />
     <Compile Include="Controllers\InscriptionController.cs" />
     <Compile Include="Controllers\ModuleCoursController.cs" />
+    <Compile Include="Controllers\PaiementController.cs" />
+    <Compile Include="Controllers\QuestionController.cs" />
     <Compile Include="Controllers\RessourceController.cs" />
     <Compile Include="Controllers\TuteurController.cs" />
     <Compile Include="Data\AppDbContext.cs" />
@@ -129,6 +132,7 @@
     <Compile Include="Models\Dashboards.cs" />
     <Compile Include="Models\EntreeFAQ.cs" />
     <Compile Include="Models\Inscription.cs" />
+    <Compile Include="Models\InscriptionBrowseVM.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\ModuleCours.cs" />
     <Compile Include="Models\Paiement.cs" />
@@ -194,6 +198,14 @@
     <Content Include="Views\Tuteur\Dashboard.cshtml" />
     <Content Include="Views\Etudiant\Dashboard.cshtml" />
     <Content Include="Views\Inscription\Browse.cshtml" />
+    <Content Include="Views\Question\Index_Etudiant.cshtml" />
+    <Content Include="Views\Question\Index_Tuteur.cshtml" />
+    <Content Include="Views\Question\Create.cshtml" />
+    <Content Include="Views\Question\Details.cshtml" />
+    <Content Include="Views\Paiement\Index_Etudiant.cshtml" />
+    <Content Include="Views\Paiement\Index_Tuteur.cshtml" />
+    <Content Include="Views\Paiement\Create.cshtml" />
+    <Content Include="Views\EntreeFAQ\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

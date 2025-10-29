@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Thot_projet.Models.EntreeFAQ>
+@{
+    ViewBag.Title = "Foire aux questions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var isTuteur = string.Equals(Convert.ToString(Session["UserRole"] ?? ""), "Tuteur", StringComparison.OrdinalIgnoreCase);
+}
+<h2>Foire aux questions</h2>
+
+@if (isTuteur)
+{
+    <p>@Html.ActionLink("Ajouter une entrée", "Create", null, new { @class = "btn btn-success" })</p>
+}
+
+@if (!Model.Any())
+{
+    <p><em>Aucune entrée pour le moment.</em></p>
+}
+else
+{
+    <div class="panel-group" id="faq">
+        @foreach (var f in Model.OrderByDescending(x => x.PublieLe))
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#faq" href="#f@f.id">
+                            @f.QuestionTexte
+                            <span class="label label-default" style="margin-left:6px;">
+                                @f.PublieLe.ToString("yyyy-MM-dd")
+                            </span>
+                        </a>
+                    </h4>
+                </div>
+                <div id="f@f.id" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        @Html.Raw((f.ReponseTexte ?? "").Replace("\n", "<br/>"))
+                        @if (isTuteur)
+                        {
+                            <div style="margin-top:10px;">
+                                @Html.ActionLink("Modifier", "Edit", new { id = f.id }) |
+                                @Html.ActionLink("Supprimer", "Delete", new { id = f.id })
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
