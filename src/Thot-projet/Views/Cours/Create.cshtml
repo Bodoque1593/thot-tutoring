@@ -3,44 +3,59 @@
     ViewBag.Title = "Créer un cours";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>Creer un cours</h2>
+<h2>Créer un cours</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
     <div class="form-horizontal">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
         <div class="form-group">
-
-
-
-            @Html.LabelFor(model => model.Nom, new { @class = "control-label col-md-2" })
-
-
+            @Html.LabelFor(m => m.Nom, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Nom, new { @class = "form-control", placeholder = "Nom du cours" })
-                @Html.ValidationMessageFor(model => model.Nom, "", new { @class = "text-danger" })
-
+                @Html.TextBoxFor(m => m.Nom, new { @class = "form-control", placeholder = "Nom du cours" })
+                @Html.ValidationMessageFor(m => m.Nom, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Niveau, new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.Niveau, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Niveau, new { @class = "form-control", placeholder = "Niveau du cours" })
-                @Html.ValidationMessageFor(model => model.Niveau, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(m => m.Niveau, new { @class = "form-control", placeholder = "Niveau du cours" })
+                @Html.ValidationMessageFor(m => m.Niveau, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
+        <div class="form-group">
+            @Html.LabelFor(m => m.Prix, new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.Prix, new { @class = "form-control", type = "number", step = "0.01", min = "0" })
+                @Html.ValidationMessageFor(m => m.Prix, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.ImageUrl, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.ImageUrl, new { @class = "form-control", placeholder = "https://..." })
+                @Html.ValidationMessageFor(m => m.ImageUrl, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Description, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(m => m.Description, 4, 60, new { @class = "form-control", placeholder = "Description du cours" })
+                @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Créer" class="btn btn-primary" />
-                @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default" })
+                @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
             </div>
         </div>
     </div>
 }
-
-

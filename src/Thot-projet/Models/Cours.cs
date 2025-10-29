@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Thot_projet.Models
 {
@@ -18,16 +16,25 @@ namespace Thot_projet.Models
         [StringLength(50, ErrorMessage = "50 caractères maximum")]
         public string Niveau { get; set; }
 
-       
+        // NUEVO: columnas que ya existen en tu BD (Prix NOT NULL) 
+        [Required]
+        [Range(0, 999999)]
+        [Display(Name = "Prix")]
+        [Column("Prix")]
+        public decimal Prix { get; set; }
 
+        [StringLength(255)]
+        [Url(ErrorMessage = "URL invalide")]
+        [Display(Name = "Image (URL)")]
+        public string ImageUrl { get; set; }
 
-        public ICollection<ModuleCours> Modules { get; set; } = new List<ModuleCours>(); // la clase de aca es el padre y estos son los hijos
-        public ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();
+        [StringLength(500)]
+        [Display(Name = "Description")]
+        public string Description { get; set; }
 
-        public ICollection<Question> Questions { get; set; } = new List<Question>(); 
-
-      
-
-
+        // Relaciones
+        public virtual ICollection<ModuleCours> Modules { get; set; } = new List<ModuleCours>();
+        public virtual ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();
+        public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
     }
 }

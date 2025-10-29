@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using Thot_projet.Data;
 using Thot_projet.Infrastructure;
@@ -13,167 +14,153 @@ namespace Thot_projet.Controllers
     {
         private readonly AppDbContext db = new AppDbContext();
 
-        // LISTA:
-        // - Tuteur: todas no resueltas (cola)
-        // - Etudiant: solo mías
+        // GET: /Question/
         public ActionResult Index()
         {
-            int uid = (int)(Session["UserId"] ?? 0);
-            string role = Convert.ToString(Session["UserRole"] ?? "");
+            var questions = db.Questions
+                .Include(q => q.Cours)
+                .Include(q => q.Ressource)
+                .Include(q => q.Etudiant)
+                .OrderByDescending(q => q.Creele)
+                .ToList();
 
-            if (string.Equals(role, "Tuteur", StringComparison.OrdinalIgnoreCase))
-            {
-                var ouvertes = db.Questions
-                    .Include(q => q.Cours).Include(q => q.Ressource).Include(q => q.Etudiant)
-                    .Where(q => !q.EstResolvee)
-                    .OrderByDescending(q => q.Creele)
-                    .ToList();
-                return View("Index_Tuteur", ouvertes);
-            }
-            else
-            {
-                var miennes = db.Questions
-                    .Include(q => q.Cours).Include(q => q.Ressource)
-                    .Where(q => q.EtudiantId == uid)
-                    .OrderByDescending(q => q.Creele)
-                    .ToList();
-                return View("Index_Etudiant", miennes);
-            }
+            return View(questions);
         }
 
-        public ActionResult Details(int id)
+        // GET: /Question/Details/5
+        public ActionResult Details(int? id)
         {
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
             var q = db.Questions
                 .Include(x => x.Cours)
                 .Include(x => x.Ressource)
-                .Include(x => x.Etudiant)
                 .Include(x => x.Reponses.Select(r => r.Tuteur))
                 .FirstOrDefault(x => x.id == id);
 
             if (q == null) return HttpNotFound();
+
             return View(q);
         }
 
-        // ---------- ETUDIANT: CREAR PREGUNTA ----------
+        // GET: /Question/Create
         [RoleAuthorize("Etudiant")]
-        public ActionResult Create()
+        public ActionResult Create(int? coursId = null, int? ressourceId = null)
         {
-            int uid = (int)(Session["UserId"] ?? 0);
-            var coursIds = db.Inscriptions.Where(i => i.UtilisateurId == uid).Select(i => i.CoursId).ToList();
-
-            ViewBag.Cours = db.Cours
-                .Where(c => coursIds.Contains(c.id))
-                .OrderBy(c => c.Nom)
-                .Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.Nom })
-                .ToList();
-
-            ViewBag.Ressources = Enumerable.Empty<SelectListItem>();
+            ViewBag.CoursId = new SelectList(db.Cours.OrderBy(c => c.Nom), "id", "Nom", coursId);
+            ViewBag.RessourceId = new SelectList(db.Ressources.OrderBy(r => r.Titre), "id", "Titre", ressourceId);
             return View();
         }
 
+        // POST: /Question/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [RoleAuthorize("Etudiant")]
-        public ActionResult Create(int CoursId, int RessourceId, string Contenu)
+        public ActionResult Create([Bind(Include = "CoursId,RessourceId,Contenu")] Question question)
         {
-            int uid = (int)(Session["UserId"] ?? 0);
+            int? uid = Session["UserId"] as int?;
+            if (uid == null)
+                return RedirectToAction("Login", "Auth");
 
-            if (!db.Inscriptions.Any(i => i.UtilisateurId == uid && i.CoursId == CoursId))
-                ModelState.AddModelError("CoursId", "Vous devez être inscrit à ce cours.");
-
-            if (!db.Ressources.Any(r => r.id == RessourceId && r.ModuleCours.CoursId == CoursId))
-                ModelState.AddModelError("RessourceId", "Ressource invalide pour ce cours.");
-
-            if (string.IsNullOrWhiteSpace(Contenu))
-                ModelState.AddModelError("Contenu", "Le contenu est requis.");
+            // Si no hay RessourceId, permitimos null (pregunta general)
+            if (question.RessourceId == 0)
+                question.RessourceId = null;
 
             if (!ModelState.IsValid)
             {
-                var coursIds = db.Inscriptions.Where(i => i.UtilisateurId == uid).Select(i => i.CoursId).ToList();
-                ViewBag.Cours = db.Cours.Where(c => coursIds.Contains(c.id))
-                    .OrderBy(c => c.Nom).Select(c => new SelectListItem { Value = c.id.ToString(), Text = c.Nom }).ToList();
-
-                ViewBag.Ressources = db.Ressources.Where(r => r.ModuleCours.CoursId == CoursId)
-                    .OrderBy(r => r.Titre).Select(r => new SelectListItem { Value = r.id.ToString(), Text = r.Titre }).ToList();
-
-                ViewBag.CoursIdSel = CoursId;
-                return View();
+                ViewBag.CoursId = new SelectList(db.Cours.OrderBy(c => c.Nom), "id", "Nom", question.CoursId);
+                ViewBag.RessourceId = new SelectList(db.Ressources.OrderBy(r => r.Titre), "id", "Titre", question.RessourceId);
+                return View(question);
             }
 
-            var q = new Question
-            {
-                EtudiantId = uid,
-                CoursId = CoursId,
-                RessourceId = RessourceId,
-                Contenu = Contenu.Trim(),
-                EstResolvee = false,
-                Creele = DateTime.UtcNow
-            };
-            db.Questions.Add(q);
+            question.EtudiantId = uid.Value;
+            question.Creele = DateTime.Now;
+            question.EstResolvee = false;
+
+            db.Questions.Add(question);
             db.SaveChanges();
 
-            TempData["ok"] = "Votre question a été créée.";
+            TempData["ok"] = "Question envoyée avec succès.";
             return RedirectToAction("Index");
         }
 
-        // AJAX: recursos por curso
-        [HttpGet]
-        [RoleAuthorize("Etudiant")]
-        public ActionResult RessourcesParCours(int coursId)
+        // GET: /Question/Answer/5  (Tuteur répond)
+        [RoleAuthorize("Tuteur")]
+        public ActionResult Answer(int? id)
         {
-            var items = db.Ressources
-                .Where(r => r.ModuleCours.CoursId == coursId)
-                .OrderBy(r => r.Titre)
-                .Select(r => new { r.id, r.Titre })
-                .ToList();
-            return Json(items, JsonRequestBehavior.AllowGet);
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var q = db.Questions.Find(id);
+            if (q == null) return HttpNotFound();
+
+            ViewBag.Question = q;
+            return View();
         }
 
-        // ---------- TUTEUR: RESPONDER / RESOLVER ----------
+        // POST: /Question/Answer
         [HttpPost]
         [ValidateAntiForgeryToken]
         [RoleAuthorize("Tuteur")]
-        public ActionResult Repondre(int questionId, string contenu)
+        public ActionResult Answer(int questionId, string contenu)
         {
-            int uid = (int)(Session["UserId"] ?? 0);
-            var q = db.Questions.FirstOrDefault(x => x.id == questionId);
-            if (q == null) { TempData["err"] = "Question introuvable."; return RedirectToAction("Index"); }
+            int? uid = Session["UserId"] as int?;
+            if (uid == null)
+                return RedirectToAction("Login", "Auth");
 
-            if (string.IsNullOrWhiteSpace(contenu))
+            var q = db.Questions.Find(questionId);
+            if (q == null)
             {
-                TempData["err"] = "Le contenu de la réponse est requis.";
-                return RedirectToAction("Details", new { id = questionId });
+                TempData["err"] = "Question introuvable.";
+                return RedirectToAction("Index");
             }
 
-            var rep = new Reponse
+            var r = new Reponse
             {
-                QuestionId = questionId,
-                TuteurId = uid,
-                Contenu = contenu.Trim(),
-                Creele = DateTime.UtcNow
+                QuestionId = q.id,
+                TuteurId = uid.Value,
+                Contenu = contenu,
+                Creele = DateTime.Now
             };
-            db.Reponses.Add(rep);
-            db.SaveChanges();
 
-            TempData["ok"] = "Réponse ajoutée.";
-            return RedirectToAction("Details", new { id = questionId });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [RoleAuthorize("Tuteur")]
-        public ActionResult MarquerResolue(int questionId)
-        {
-            var q = db.Questions.FirstOrDefault(x => x.id == questionId);
-            if (q == null) { TempData["err"] = "Question introuvable."; return RedirectToAction("Index"); }
-
+            db.Reponses.Add(r);
             q.EstResolvee = true;
             db.SaveChanges();
 
-            TempData["ok"] = "Question marquée comme résolue.";
-            return RedirectToAction("Details", new { id = questionId });
+            TempData["ok"] = "Réponse envoyée.";
+            return RedirectToAction("Details", new { id = q.id });
         }
 
-       
+        // DELETE (solo para Tuteur)
+        [RoleAuthorize("Tuteur")]
+        public ActionResult Delete(int? id)
+        {
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var q = db.Questions.Include(x => x.Cours).FirstOrDefault(x => x.id == id);
+            if (q == null) return HttpNotFound();
+
+            return View(q);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [RoleAuthorize("Tuteur")]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            var q = db.Questions
+                .Include(x => x.Reponses)
+                .FirstOrDefault(x => x.id == id);
+
+            if (q != null)
+            {
+                db.Reponses.RemoveRange(q.Reponses.ToList());
+                db.Questions.Remove(q);
+                db.SaveChanges();
+                TempData["ok"] = "Question supprimée.";
+            }
+            return RedirectToAction("Index");
+        }
+
+  
     }
 }

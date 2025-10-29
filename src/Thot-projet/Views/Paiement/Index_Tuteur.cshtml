@@ -1,31 +1,45 @@
 ﻿@model IEnumerable<Thot_projet.Models.Paiement>
-
 @{
-    ViewBag.Title = "Tous les paiements";
+    ViewBag.Title = "Paiements (tous)";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var total = Model?.Sum(p => p.Montant) ?? 0m;
 }
-<h2>Tous les paiements</h2>
+<h2>Paiements (tous)</h2>
 
-<table class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <th>Utilisateur</th>
-            <th>Montant</th>
-            <th>Monnaie</th>
-            <th>Statut</th>
-            <th>Payé le</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var p in Model)
-        {
+@if (Model == null || !Model.Any())
+{
+    <p><em>Aucun paiement enregistré.</em></p>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead>
             <tr>
-                <td>@(p.Utilisateur?.Nomcomplet ?? p.Utilisateur?.Email ?? "-")</td>
-                <td>@p.Montant.ToString("0.00")</td>
-                <td>@p.Monnaie</td>
-                <td>@p.Statut</td>
-                <td>@p.PayeLe.ToString("yyyy-MM-dd HH:mm")</td>
+                <th>Utilisateur</th>
+                <th>Montant</th>
+                <th>Monnaie</th>
+                <th>Statut</th>
+                <th>Payé le</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@(p.Utilisateur != null ? (p.Utilisateur.Nomcomplet ?? p.Utilisateur.Email) : "-")</td>
+                    <td>@p.Montant.ToString("0.00")</td>
+                    <td>@p.Monnaie</td>
+                    <td>@p.Statut</td>
+                    <td>@p.PayeLe.ToString("yyyy-MM-dd HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th class="text-right" colspan="4">Total</th>
+                <th>@total.ToString("0.00")</th>
+            </tr>
+        </tfoot>
+    </table>
+}
+    

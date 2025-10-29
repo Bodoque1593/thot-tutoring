@@ -1,41 +1,52 @@
 ﻿@{
-    ViewBag.Title = "Nouveau paiement";
+    ViewBag.Title = "Paiement";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Nouveau paiement</h2>
-
-@using (Html.BeginForm("Create", "Paiement", FormMethod.Post, new { @class = "form", role = "form" }))
-{
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-
-    <div class="form-group">
-        <label>Montant</label>
-        <input type="number" name="Montant" step="0.01" class="form-control" />
-        @Html.ValidationMessage("Montant", "", new { @class = "text-danger" })
+<h2>Paiement</h2>
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<div class="panel panel-default">
+    <div class="panel-body">
+        @using (Html.BeginForm("Create", "Paiement", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                @Html.Label("Montant", new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.TextBox("Montant", (decimal)ViewBag.Montant, new { @class = "form-control", type = "number", step = "0.01", min = "0.01" })
+                    @Html.ValidationMessage("Montant", "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("Monnaie", new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.DropDownList("Monnaie", new SelectList((IEnumerable<string>)ViewBag.Monnaies, ViewBag.Monnaie), null, new { @class = "form-control" })
+                    @Html.ValidationMessage("Monnaie", "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("Statut", new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.DropDownList("Statut", new SelectList((IEnumerable<string>)ViewBag.Statuts, ViewBag.Statut), null, new { @class = "form-control" })
+                    @Html.ValidationMessage("Statut", "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="submit" class="btn btn-success">Payer</button>
+                    @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+                </div>
+            </div>
+        }
     </div>
+</div>
 
-    <div class="form-group">
-        <label>Monnaie</label>
-        <select name="Monnaie" class="form-control">
-            @foreach (var m in (string[])ViewBag.Monnaies)
-            {
-                <option>@m</option>
-}
-        </select>
-        @Html.ValidationMessage("Monnaie", "", new { @class = "text-danger" })
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <button type="submit" class="btn btn-success">Payer</button>
+        @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
     </div>
-
-    <div class="form-group">
-        <label>Statut</label>
-        <select name="Statut" class="form-control">
-            @foreach (var s in (string[])ViewBag.Statuts)
-            {
-                <option>@s</option>
-}
-        </select>
-        @Html.ValidationMessage("Statut", "", new { @class = "text-danger" })
+</div>
+        }
     </div>
-
-    <button type="submit" class="btn btn-primary">Enregistrer</button>
-}
+</div>

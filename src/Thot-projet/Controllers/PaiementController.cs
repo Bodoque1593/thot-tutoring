@@ -13,25 +13,15 @@ namespace Thot_projet.Controllers
     {
         private readonly AppDbContext db = new AppDbContext();
 
-        public ActionResult Index()
-        {
-            int uid = (int)(Session["UserId"] ?? 0);
-            string role = Convert.ToString(Session["UserRole"] ?? "");
-
-            var q = db.Paiements.Include(p => p.Utilisateur).OrderByDescending(p => p.PayeLe);
-
-            if (string.Equals(role, "Etudiant", StringComparison.OrdinalIgnoreCase))
-                return View("Index_Etudiant", q.Where(p => p.UtilisateurId == uid).ToList());
-            else
-                return View("Index_Tuteur", q.ToList());
-        }
-
-        // Crear registro de pago (simulado) – solo estudiante
         [RoleAuthorize("Etudiant")]
-        public ActionResult Create()
+        public ActionResult Create(decimal? Montant, string Monnaie = "CAD", string Statut = "Payé")
         {
             ViewBag.Monnaies = new[] { "CAD", "USD", "EUR" };
             ViewBag.Statuts = new[] { "Payé", "En attente", "Annulé" };
+
+            ViewBag.Montant = Montant ?? 0.01m;
+            ViewBag.Monnaie = Monnaie;
+            ViewBag.Statut = Statut;
             return View();
         }
 
@@ -53,26 +43,19 @@ namespace Thot_projet.Controllers
                 return View();
             }
 
-            var p = new Paiement
+            db.Paiements.Add(new Paiement
             {
                 UtilisateurId = uid,
                 Montant = Montant,
                 Monnaie = Monnaie.Trim(),
                 Statut = Statut.Trim(),
                 PayeLe = DateTime.UtcNow
-            };
-
-            db.Paiements.Add(p);
+            });
             db.SaveChanges();
-
             TempData["ok"] = "Paiement enregistré.";
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing) db.Dispose();
-            base.Dispose(disposing);
-        }
+       
     }
 }
