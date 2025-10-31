@@ -50,6 +50,30 @@ namespace Thot_projet.Controllers
             return View(c);
         }
 
+        [RoleAuthorize("Tuteur")]
+        public ActionResult Vitrine()
+        {
+            var list = db.Cours.OrderBy(c => c.Nom).ToList();
+            return View(list);
+        }
+
+
+        [RoleAuthorize("Etudiant", "Tuteur")]
+        public ActionResult Details(int? id)
+        {
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var c = db.Cours
+                .Include(x => x.Modules.Select(m => m.Ressources))
+                .Include(x => x.Questions)
+                .FirstOrDefault(x => x.id == id);
+
+            if (c == null) return HttpNotFound();
+
+            return View(c); // Ya tienes Views/Cours/Details.cshtml
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [RoleAuthorize("Tuteur")]
@@ -71,6 +95,10 @@ namespace Thot_projet.Controllers
             if (c == null) return HttpNotFound();
             return View(c);
         }
+
+
+
+
 
         // Borrado en cascada manual (si tu SQL no tiene ON DELETE CASCADE)
         [HttpPost, ActionName("Delete")]

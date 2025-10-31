@@ -44,39 +44,41 @@
                 @if (isAuth)
                 {
                     <ul class="nav navbar-nav">
-                        @if (isEtud)
+                        @if (isAuth)
                         {
-                            @* Menú compacto de Estudiante *@
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Espace étudiant <span class="caret"></span></a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li>@Html.ActionLink("Mes cours", "Index", "Inscription")</li>
-                                    <li>@Html.ActionLink("S'inscrire à un cours", "Browse", "Inscription")</li>
-                                    <li class="divider"></li>
-                                    <li>@Html.ActionLink("Mes paiements", "Index", "Paiement")</li>
-                                    <li>@Html.ActionLink("Questions", "Index", "Question")</li>
-                                    <li>@Html.ActionLink("FAQ", "Index", "EntreeFAQ")</li>
-                                </ul>
-                            </li>
-                        }
-                        else if (isTut)
-                        {
-                            @* Menú para Tuteur *@
-                            <li>@Html.ActionLink("Mon tableau (Tuteur)", "Dashboard", "Tuteur")</li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Gérer <span class="caret"></span></a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li>@Html.ActionLink("Cours", "Index", "Cours")</li>
-                                    <li>@Html.ActionLink("Modules", "Index", "ModuleCours")</li>
-                                    <li>@Html.ActionLink("Ressources", "Index", "Ressource")</li>
-                                    <li class="divider"></li>
-                                    <li>@Html.ActionLink("Paiements (tous)", "Index", "Paiement")</li>
-                                    <li>@Html.ActionLink("FAQ", "Index", "EntreeFAQ")</li>
-                                    <li>@Html.ActionLink("Questions", "Index", "Question")</li>
-                                </ul>
-                            </li>
+                            if (string.Equals(role, "Etudiant", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <li>@Html.ActionLink("Cours", "Index", "Cours")</li>
+                                <li>@Html.ActionLink("S'inscrire à un cours", "Browse", "Inscription")</li>
+                                <li>@Html.ActionLink("Mes cours", "Index", "Inscription")</li>
+                                <li>@Html.ActionLink("Mes paiements", "Index", "Paiement")</li>
+                                <li>@Html.ActionLink("Questions", "Index", "Question")</li>
+                                <li>@Html.ActionLink("FAQ", "Index", "EntreeFAQ")</li>
+                            }
+                            else if (string.Equals(role, "Tuteur", StringComparison.OrdinalIgnoreCase))
+                            {
+                                @* menú de gestión (dropdown) *@
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Gérer <span class="caret"></span></a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>@Html.ActionLink("Cours", "Index", "Cours")</li>
+                                        <li>@Html.ActionLink("Modules", "Index", "ModuleCours")</li>
+                                        <li>@Html.ActionLink("Ressources", "Index", "Ressource")</li>
+                                        <li class="divider"></li>
+                                        <li>@Html.ActionLink("Paiements (tous)", "Index", "Paiement")</li>
+                                        <li>@Html.ActionLink("Questions", "Index", "Question")</li>
+                                    </ul>
+                                </li>
+
+                                @* enlaces arriba fuera del dropdown *@
+                                <li>@Html.ActionLink("FAQ", "Index", "EntreeFAQ")</li>
+                                <li>@Html.ActionLink("Vitrine cours", "Vitrine", "Cours")</li>
+                            }
                         }
                     </ul>
+
+                }
+                </ul>
                 }
 
                 <ul class="nav navbar-nav navbar-right">

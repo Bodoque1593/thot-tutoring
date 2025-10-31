@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using Thot_projet.Data;
@@ -24,7 +23,6 @@ namespace Thot_projet.Controllers
             if (uid == null) return RedirectToAction("Login", "Auth");
 
             var list = db.Inscriptions
-                         .Include(i => i.Cours)
                          .Where(i => i.UtilisateurId == uid.Value)
                          .OrderByDescending(i => i.InscritLe)
                          .ToList();
@@ -51,7 +49,7 @@ namespace Thot_projet.Controllers
                     CoursId = c.id,
                     Nom = c.Nom,
                     Niveau = c.Niveau,
-                    Prix = c.Prix,         // decimal NO NULL
+                    Prix = c.Prix,
                     ImageUrl = c.ImageUrl,
                     Description = c.Description,
                     DejaInscrit = misIds.Contains(c.id)
@@ -80,24 +78,46 @@ namespace Thot_projet.Controllers
             {
                 UtilisateurId = uid.Value,
                 CoursId = coursId,
-                InscritLe = DateTime.Now
+                InscritLe = DateTime.UtcNow
             });
             db.SaveChanges();
 
             TempData["ok"] = "Inscription réussie.";
 
             // flujo de pago si el curso tiene precio (> 0)
-            var prix = db.Cours.Where(c => c.id == coursId).Select(c => c.Prix).FirstOrDefault(); // decimal
-            if (prix > 0m)
+            var prix = db.Cours.Where(c => c.id == coursId)
+                               .Select(c => c.Prix)
+                               .FirstOrDefault();
+
+            if (prix > 0)
             {
-                // Ajusta estos parámetros si tu PaiementController usa otros nombres
-                return RedirectToAction("Create", "Paiement",
-                    new { Montant = prix, Monnaie = "CAD", Statut = "Payé" });
+                // la action Create del PaiementController admite: Create(decimal? Montant, string Monnaie, string Statut)
+                return RedirectToAction(
+                    "Create",
+                    "Paiement",
+                    new { Montant = prix, Monnaie = "CAD", Statut = "Payé" }
+                );
             }
 
             return RedirectToAction("Index");
         }
 
-      
+        // POST: /Inscription/Unenroll
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Unenroll(int coursId)
+        {
+            var uid = CurrentUserId();
+            if (uid == null || !IsEtudiant()) return RedirectToAction("Login", "Auth");
+
+            var ins = db.Inscriptions.FirstOrDefault(i => i.UtilisateurId == uid.Value && i.CoursId == coursId);
+            if (ins != null)
+            {
+                db.Inscriptions.Remove(ins);
+                db.SaveChanges();
+                TempData["ok"] = "Inscription supprimée.";
+            }
+            return RedirectToAction("Browse");
+        }
     }
 }

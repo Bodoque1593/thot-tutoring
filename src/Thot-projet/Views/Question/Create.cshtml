@@ -1,52 +1,31 @@
-﻿@{
+﻿@model Thot_projet.Models.Question
+@{
     ViewBag.Title = "Poser une question";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h2>Poser une question</h2>
 
-@using (Html.BeginForm("Create", "Question", FormMethod.Post, new { @class = "form", role = "form" }))
+@using (Html.BeginForm("Create", "Question", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
     <div class="form-group">
-        <label>Cours</label>
-        @Html.DropDownList("CoursId", (IEnumerable<SelectListItem>)ViewBag.Cours, "-- choisir un cours --", new { @class = "form-control", id = "cours" })
-        @Html.ValidationMessage("CoursId", "", new { @class = "text-danger" })
+        @Html.Label("Cours")
+        @Html.DropDownList("CoursId", (SelectList)ViewBag.Cours, "-- choisissez --", new { @class = "form-control", required = "required" })
     </div>
 
     <div class="form-group">
-        <label>Ressource</label>
-        @Html.DropDownList("RessourceId", (IEnumerable<SelectListItem>)ViewBag.Ressources, "-- choisir une ressource --", new { @class = "form-control", id = "ressource" })
-        @Html.ValidationMessage("RessourceId", "", new { @class = "text-danger" })
+        @Html.Label("Ressource")
+        @Html.DropDownList("RessourceId", (SelectList)ViewBag.Ressources, "-- choisissez --", new { @class = "form-control", required = "required" })
+        <p class="help-block">* Pour l’instant la ressource est requise (contrainte du modèle).</p>
     </div>
 
     <div class="form-group">
-        <label>Votre question</label>
-        <textarea name="Contenu" class="form-control" rows="5" placeholder="Décrivez votre question..."></textarea>
-        @Html.ValidationMessage("Contenu", "", new { @class = "text-danger" })
+        @Html.LabelFor(m => m.Contenu)
+        @Html.TextAreaFor(m => m.Contenu, 6, 80, new { @class = "form-control", required = "required" })
     </div>
 
-    <button type="submit" class="btn btn-primary">Envoyer</button>
-}
-
-@section Scripts{
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script>
-    // Si viene de un post inválido, re-selecciona el curso
-    var coursIdSel = '@(ViewBag.CoursIdSel ?? "")';
-    if(coursIdSel) $("#cours").val(coursIdSel);
-
-    $("#cours").on("change", function(){
-        var cid = $(this).val();
-        $("#ressource").empty();
-        if(!cid){ $("#ressource").append($("<option>").val("").text("-- choisir une ressource --")); return; }
-        $.getJSON("@Url.Action("RessourcesParCours","Question")", { coursId: cid }, function(data){
-            $("#ressource").append($("<option>").val("").text("-- choisir une ressource --"));
-            $.each(data, function(_, it){
-                $("#ressource").append($("<option>").val(it.id).text(it.Titre));
-            });
-        });
-    });
-    </script>
+    <button type="submit" class="btn btn-success">Envoyer</button>
+    @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
 }

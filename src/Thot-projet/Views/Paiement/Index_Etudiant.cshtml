@@ -1,63 +1,24 @@
 ﻿@model IEnumerable<Thot_projet.Models.Paiement>
-@{
-    ViewBag.Title = "Mes paiements";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    var total = Model?.Sum(p => p.Montant) ?? 0m;
-}
+@{ ViewBag.Title = "Mes paiements"; }
 <h2>Mes paiements</h2>
-
-<p>
-    @Html.ActionLink("Nouveau paiement", "Create", null, new { @class = "btn btn-primary" })
-</p>
-
-@if (Model == null || !Model.Any())
+@if (!Model.Any())
 {
-    <p><em>Aucun paiement pour le moment.</em></p>
+    <div class="alert alert-info">Aucun paiement pour l’instant.</div>
 }
 else
 {
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th>Montant</th>
-                <th>Monnaie</th>
-                <th>Statut</th>
-                <th>Payé le</th>
-            </tr>
-        </thead>
+    <table class="table table-striped">
+        <thead><tr><th>Montant</th><th>Monnaie</th><th>Statut</th><th>Date</th></tr></thead>
         <tbody>
             @foreach (var p in Model)
             {
                 <tr>
-                    <td>@p.Montant.ToString("0.00")</td>
+                    <td>@p.Montant.ToString("C")</td>
                     <td>@p.Monnaie</td>
-                    <td>
-                        @if (string.Equals(p.Statut, "Payé", StringComparison.OrdinalIgnoreCase))
-                        {
-                            <span class="label label-success">Payé</span>
-                        }
-                        else if (string.Equals(p.Statut, "En attente", StringComparison.OrdinalIgnoreCase))
-                        {
-                            <span class="label label-warning">En attente</span>
-                        }
-                        else if (string.Equals(p.Statut, "Annulé", StringComparison.OrdinalIgnoreCase))
-                        {
-                            <span class="label label-default">Annulé</span>
-                        }
-                        else
-                        {
-                            @p.Statut
-                        }
-                    </td>
-                    <td>@p.PayeLe.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@p.Statut</td>
+                    <td>@p.PayeLe.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
                 </tr>
             }
         </tbody>
-        <tfoot>
-            <tr>
-                <th class="text-right" colspan="3">Total</th>
-                <th>@total.ToString("0.00")</th>
-            </tr>
-        </tfoot>
     </table>
 }

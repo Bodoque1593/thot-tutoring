@@ -206,6 +206,11 @@
     <Content Include="Views\Paiement\Index_Tuteur.cshtml" />
     <Content Include="Views\Paiement\Create.cshtml" />
     <Content Include="Views\EntreeFAQ\Index.cshtml" />
+    <Content Include="Views\Question\Index.cshtml" />
+    <Content Include="Views\Ressource\Delete.cshtml" />
+    <Content Include="Views\Question\Answer.cshtml" />
+    <Content Include="Views\Cours\Vitrine.cshtml" />
+    <Content Include="Views\Paiement\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

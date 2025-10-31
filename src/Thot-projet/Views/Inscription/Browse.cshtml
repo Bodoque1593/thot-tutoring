@@ -1,52 +1,68 @@
 ﻿@model IEnumerable<Thot_projet.Models.InscriptionBrowseVM>
+@using System.Globalization
+
 @{
     ViewBag.Title = "S'inscrire à un cours";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    var culture = new CultureInfo("fr-CA"); // para mostrar CAD
 }
-<h2>S'inscrire à un cours</h2>
 
-@if (!Model.Any())
+<h2>Catalogue de cours</h2>
+<hr />
+
+@if (Model == null || !Model.Any())
 {
-    <p><em>Aucun cours disponible.</em></p>
+    <div class="alert alert-info">Aucun cours disponible pour le moment.</div>
 }
 else
 {
     <div class="row">
-        @foreach (var c in Model)
+        @foreach (var v in Model)
         {
             <div class="col-sm-6 col-md-4">
-                <div class="thumbnail">
-                    @if (!string.IsNullOrWhiteSpace(c.ImageUrl))
-                    {
-                        <img src="@c.ImageUrl" alt="@c.Nom" style="max-height:180px;object-fit:cover;width:100%;" />
-                    }
-                    <div class="caption">
-                        <h3 style="margin-top:0">@c.Nom</h3>
-                        <p>
-                            <span class="label label-default">Niveau: @c.Niveau</span>
-                            <span class="label label-info" style="margin-left:6px;">@c.Prix.ToString("0.00") CAD</span>
-                        </p>
+                <div class="panel panel-default" style="height:100%;">
+                    <div class="panel-heading">
+                        <strong>@v.Nom</strong>
+                        <span class="pull-right label label-default">Niveau @v.Niveau</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="text-center" style="margin-bottom:10px;">
+                            @{
+                                var img = string.IsNullOrWhiteSpace(v.ImageUrl)
+                                          ? "https://via.placeholder.com/400x220?text=Cours"
+                                          : v.ImageUrl;
+                            }
+                            <img src="@img" class="img-responsive img-thumbnail" style="max-height:220px; margin:0 auto;" />
+                        </div>
 
-                        @if (c.DejaInscrit)
+                        @if (!string.IsNullOrWhiteSpace(v.Description))
                         {
-                            <p><span class="label label-success">Déjà inscrit</span></p>
-                            <p>@Html.ActionLink("Voir mes cours", "Index", "Inscription", null, new { @class = "btn btn-default btn-sm" })</p>
+                            <p style="min-height:48px;">@v.Description</p>
+                        }
+
+                        <p>
+                            <span class="h4">@v.Prix.ToString("C", culture)</span>
+                            <span class="text-muted"> CAD</span>
+                        </p>
+                    </div>
+                    <div class="panel-footer">
+                        @if (v.DejaInscrit)
+                        {
+                            <span class="label label-success">Déjà inscrit</span>
+                            @Html.ActionLink("Mes cours", "Index", "Inscription", null, new { @class = "btn btn-link btn-xs pull-right" })
                         }
                         else
                         {
-                            @using (Html.BeginForm("Enroll", "Inscription", FormMethod.Post))
+                            @* IMPORTANTE: estamos dentro de un bloque de código (if). Aquí el using va SIN @ *@
+                            using (Html.BeginForm("Enroll", "Inscription", FormMethod.Post, new { @class = "form-inline" }))
                             {
                                 @Html.AntiForgeryToken()
-                                @Html.Hidden("coursId", c.CoursId)
-                                <button type="submit" class="btn btn-primary btn-sm">S'inscrire</button>
-                                if (c.Prix > 0)
-                                {
-                                    <span class="help-block" style="display:inline-block;margin-left:8px;">
-                                        Le paiement vous sera proposé après l’inscription.
-                                    </span>
-                                }
+                                @Html.Hidden("coursId", v.CoursId)
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    S'inscrire
+                                </button>
                             }
                         }
+                        <div class="clearfix"></div>
                     </div>
                 </div>
             </div>

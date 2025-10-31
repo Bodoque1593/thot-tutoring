@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Répondre";
+    var q = ViewBag.Question as Thot_projet.Models.Question;
+}
+<h2>Répondre</h2>
+<div class="panel panel-default">
+    <div class="panel-heading"><strong>Question #@q.id</strong> — @q.Cours?.Nom</div>
+    <div class="panel-body">
+        <p>@q.Contenu</p>
+        <hr />
+        @using (Html.BeginForm("Answer", "Question", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("questionId", q.id)
+            <div class="form-group">
+                <label for="contenu">Votre réponse</label>
+                <textarea name="contenu" id="contenu" class="form-control" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Envoyer</button>
+            @Html.ActionLink("Annuler", "Details", new { id = q.id }, new { @class = "btn btn-default", style = "margin-left:8px" })
+        }
+    </div>
+</div>

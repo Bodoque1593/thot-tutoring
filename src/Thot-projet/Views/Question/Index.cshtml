@@ -1,0 +1,32 @@
+﻿@model IEnumerable<Thot_projet.Models.Question>
+@{
+    ViewBag.Title = "Questions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Questions</h2>
+
+<p>@Html.ActionLink("Poser une question", "Create", "Question", null, new { @class = "btn btn-primary" })</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Étudiant</th>
+            <th>Cours</th>
+            <th>Ressource</th>
+            <th>Extrait</th>
+            <th>Créée le</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var q in Model ?? Enumerable.Empty<Thot_projet.Models.Question>())
+        {
+            <tr>
+                <td>@(q.Etudiant?.Nomcomplet ?? "-")</td>
+                <td>@(q.Cours?.Nom ?? "-")</td>
+                <td>@(q.Ressource?.Titre ?? "-")</td>
+                <td>@(string.IsNullOrWhiteSpace(q.Contenu) ? "-" : (q.Contenu.Length > 60 ? q.Contenu.Substring(0, 60) + "..." : q.Contenu))</td>
+                <td>@q.Creele.ToString("yyyy-MM-dd HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,35 @@
+﻿@model Thot_projet.Models.Ressource
+@{
+    ViewBag.Title = "Supprimer la ressource";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Supprimer la ressource</h2>
+
+<div class="alert alert-warning">
+    <strong>Attention:</strong> cette action est irréversible.
+</div>
+
+<dl class="dl-horizontal">
+    <dt>Cours</dt>
+    <dd>@(Model?.ModuleCours?.Cours?.Nom ?? "-")</dd>
+
+    <dt>Module</dt>
+    <dd>@(Model?.ModuleCours?.Titre ?? "-")</dd>
+
+    <dt>Type</dt>
+    <dd>@Model.Type</dd>
+
+    <dt>Titre</dt>
+    <dd>@Model.Titre</dd>
+
+    <dt>Lien</dt>
+    <dd><a href="@Model.url" target="_blank">@Model.url</a></dd>
+</dl>
+
+@using (Html.BeginForm("Delete", "Ressource", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.id)
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+    @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+}

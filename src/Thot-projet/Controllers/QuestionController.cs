@@ -14,17 +14,30 @@ namespace Thot_projet.Controllers
     {
         private readonly AppDbContext db = new AppDbContext();
 
-        // GET: /Question/
+        // INDEX por rol
         public ActionResult Index()
         {
-            var questions = db.Questions
-                .Include(q => q.Cours)
-                .Include(q => q.Ressource)
-                .Include(q => q.Etudiant)
-                .OrderByDescending(q => q.Creele)
-                .ToList();
+            string role = Convert.ToString(Session["UserRole"] ?? "");
+            int uid = Convert.ToInt32(Session["UserId"] ?? 0);
 
-            return View(questions);
+            if (string.Equals(role, "Tuteur", StringComparison.OrdinalIgnoreCase))
+            {
+                var open = db.Questions
+                             .Include(q => q.Cours)
+                             .Where(q => !q.EstResolvee)
+                             .OrderByDescending(q => q.Creele)
+                             .ToList();
+                return View("Index_Tuteur", open);
+            }
+            else
+            {
+                var mine = db.Questions
+                             .Include(q => q.Cours)
+                             .Where(q => q.EtudiantId == uid)
+                             .OrderByDescending(q => q.Creele)
+                             .ToList();
+                return View("Index_Etudiant", mine);
+            }
         }
 
         // GET: /Question/Details/5
@@ -39,7 +52,6 @@ namespace Thot_projet.Controllers
                 .FirstOrDefault(x => x.id == id);
 
             if (q == null) return HttpNotFound();
-
             return View(q);
         }
 
@@ -59,12 +71,9 @@ namespace Thot_projet.Controllers
         public ActionResult Create([Bind(Include = "CoursId,RessourceId,Contenu")] Question question)
         {
             int? uid = Session["UserId"] as int?;
-            if (uid == null)
-                return RedirectToAction("Login", "Auth");
+            if (uid == null) return RedirectToAction("Login", "Auth");
 
-            // Si no hay RessourceId, permitimos null (pregunta general)
-            if (question.RessourceId == 0)
-                question.RessourceId = null;
+            if (question.RessourceId == 0) question.RessourceId = null;
 
             if (!ModelState.IsValid)
             {
@@ -74,7 +83,7 @@ namespace Thot_projet.Controllers
             }
 
             question.EtudiantId = uid.Value;
-            question.Creele = DateTime.Now;
+            question.Creele = DateTime.UtcNow;
             question.EstResolvee = false;
 
             db.Questions.Add(question);
@@ -89,8 +98,7 @@ namespace Thot_projet.Controllers
         public ActionResult Answer(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            var q = db.Questions.Find(id);
+            var q = db.Questions.Include(x => x.Cours).FirstOrDefault(x => x.id == id);
             if (q == null) return HttpNotFound();
 
             ViewBag.Question = q;
@@ -104,8 +112,13 @@ namespace Thot_projet.Controllers
         public ActionResult Answer(int questionId, string contenu)
         {
             int? uid = Session["UserId"] as int?;
-            if (uid == null)
-                return RedirectToAction("Login", "Auth");
+            if (uid == null) return RedirectToAction("Login", "Auth");
+
+            if (string.IsNullOrWhiteSpace(contenu))
+            {
+                TempData["err"] = "La réponse est vide.";
+                return RedirectToAction("Answer", new { id = questionId });
+            }
 
             var q = db.Questions.Find(questionId);
             if (q == null)
@@ -118,8 +131,8 @@ namespace Thot_projet.Controllers
             {
                 QuestionId = q.id,
                 TuteurId = uid.Value,
-                Contenu = contenu,
-                Creele = DateTime.Now
+                Contenu = contenu.Trim(),
+                Creele = DateTime.UtcNow
             };
 
             db.Reponses.Add(r);
@@ -135,10 +148,8 @@ namespace Thot_projet.Controllers
         public ActionResult Delete(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
             var q = db.Questions.Include(x => x.Cours).FirstOrDefault(x => x.id == id);
             if (q == null) return HttpNotFound();
-
             return View(q);
         }
 
@@ -160,7 +171,5 @@ namespace Thot_projet.Controllers
             }
             return RedirectToAction("Index");
         }
-
-  
     }
 }

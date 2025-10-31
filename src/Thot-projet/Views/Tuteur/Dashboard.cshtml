@@ -1,60 +1,61 @@
 ﻿@model Thot_projet.Models.TuteurDashboardVM
 @{
-    ViewBag.Title = "Tableau du tuteur";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Tableau de bord (Tuteur)";
 }
-<h2>Tableau du tuteur</h2>
+<h2>Tableau de bord</h2>
 
 <div class="row">
-    <div class="col-md-6">
-        <h3>Questions non résolues (Top 10)</h3>
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Étudiant</th>
-                    <th>Cours</th>
-                    <th>Ressource</th>
-                    <th>Créée le</th>
-                    <th>Extrait</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var q in Model.QuestionsOuvertes)
-                {
-                    <tr>
-                        <td>@(q.Etudiant != null ? q.Etudiant.Nomcomplet ?? q.Etudiant.Email : "-")</td>
-                        <td>@(q.Cours != null ? q.Cours.Nom : "-")</td>
-                        <td>@(q.Ressource != null ? q.Ressource.Titre : "-")</td>
-                        <td>@q.Creele.ToString("yyyy-MM-dd HH:mm")</td>
-                        <td>@(string.IsNullOrWhiteSpace(q.Contenu) ? "-" : (q.Contenu.Length > 60 ? q.Contenu.Substring(0, 60) + "..." : q.Contenu))</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="col-md-7">
+        <div class="panel panel-warning">
+            <div class="panel-heading"><strong>Questions ouvertes</strong></div>
+            <table class="table table-striped">
+                <thead>
+                    <tr><th>Cours</th><th>Contenu</th><th>Créée</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @if (!(Model?.QuestionsOuvertes?.Any() ?? false))
+                    {
+                        <tr><td colspan="4">Aucune question ouverte.</td></tr>
+                    }
+                    else
+                    {
+                        foreach (var q in Model.QuestionsOuvertes)
+                        {
+                            <tr>
+                                <td>@(q.Cours != null ? q.Cours.Nom : "—")</td>
+                                <td>@q.Contenu</td>
+                                <td>@q.Creele.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@Html.ActionLink("Répondre", "Answer", "Question", new { id = q.id }, new { @class = "btn btn-xs btn-success" })</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="col-md-6">
-        <h3>Mes sessions de clavardage (Top 10)</h3>
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Étudiant</th>
-                    <th>Début</th>
-                    <th>Fin</th>
-                    <th>Durée (min)</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var s in Model.MesChats)
+    <div class="col-md-5">
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Mes sessions de clavardage</strong></div>
+            <ul class="list-group">
+                @if (!(Model?.MesChats?.Any() ?? false))
                 {
-                    <tr>
-                        <td>@(s.Etudiant != null ? s.Etudiant.Nomcomplet ?? s.Etudiant.Email : "-")</td>
-                        <td>@s.DemarreLe.ToString("yyyy-MM-dd HH:mm")</td>
-                        <td>@(s.TermineLe.HasValue ? s.TermineLe.Value.ToString("yyyy-MM-dd HH:mm") : "-")</td>
-                        <td>@s.DureeMinutes</td>
-                    </tr>
+                    <li class="list-group-item">Aucune session.</li>
                 }
-            </tbody>
-        </table>
+                else
+                {
+                    foreach (var s in Model.MesChats)
+                    {
+                        <li class="list-group-item">
+                            Étudiant #@s.EtudiantId — Démarrée: @s.DemarreLe.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                            @if (s.TermineLe.HasValue)
+                            {
+                                <span class="text-muted"> | Terminée: @s.TermineLe.Value.ToLocalTime().ToString("HH:mm")</span>
+                            }
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
     </div>
 </div>

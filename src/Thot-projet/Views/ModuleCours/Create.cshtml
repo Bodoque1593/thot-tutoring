@@ -1,57 +1,56 @@
 ﻿@model Thot_projet.Models.ModuleCours
 @{
     ViewBag.Title = "Créer un module";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    var uiHelp = (bool?)ViewBag.UiHelp == true;
 }
-
 <h2>Créer un module</h2>
-
+<hr />
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
     <div class="form-horizontal">
-        <hr />
 
+        <div class="alert alert-info" style="display:@(uiHelp ? "block" : "none")">
+            Conseil: créez le module avec <strong>Cours</strong>, <strong>Numéro</strong> et <strong>Titre</strong>.
+            Ensuite, vous serez redirigé pour <em>ajouter la première ressource</em> (PDF, lien, vidéo, etc.).
+        </div>
 
         <div class="form-group">
             @Html.LabelFor(m => m.CoursId, "Cours", new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(m => m.CoursId, (SelectList)ViewBag.CoursId, "-- choisissez un cours --", new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.CoursId, "", new { @class = "text-danger" })
+            <div class="col-md-6">
+                @Html.DropDownList("CoursId", (SelectList)ViewBag.CoursId, "-- choisissez un cours --", new { @class = "form-control", required = "required" })
+                <span class="help-block">Sélectionnez le cours auquel appartient ce module.</span>
             </div>
         </div>
 
- 
         <div class="form-group">
             @Html.LabelFor(m => m.Numero, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.Numero, new { @class = "form-control", type = "number", min = "1", placeholder = "Numéro du module" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(m => m.Numero, new { @class = "form-control", type = "number", min = "1", step = "1", placeholder = "Numéro du module", required = "required" })
                 @Html.ValidationMessageFor(m => m.Numero, "", new { @class = "text-danger" })
+                <span class="help-block">Le numéro doit être <strong>unique</strong> par cours.</span>
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(m => m.Titre, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.Titre, new { @class = "form-control", placeholder = "Titre du module" })
-                @Html.ValidationMessageFor(m => m.Titre, "", new { @class = "text-danger" })
+            <div class="col-md-6">
+                @Html.TextBoxFor(m => m.Titre, new { @class = "form-control", maxlength = "100", placeholder = "Titre du module", required = "required" })
             </div>
         </div>
 
-
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Enregistrer" class="btn btn-success" />
-                @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default" })
+            <div class="col-md-offset-2 col-md-6">
+                <button type="submit" class="btn btn-success">Enregistrer</button>
+                @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px" })
             </div>
         </div>
     </div>
 }
 
-@section Scripts {
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
-}
+<!-- Cargar validaciones sin bundles para evitar que se vea texto literal -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>

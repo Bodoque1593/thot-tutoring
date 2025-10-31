@@ -11,16 +11,16 @@ namespace Thot_projet.Controllers
     {
         private readonly AppDbContext db = new AppDbContext();
 
-        // GET: /ModuleCours
         public ActionResult Index()
         {
-            var modules = db.ModulesCours.Include(m => m.Cours).OrderBy(m => m.Cours.Nom)
-                            .ThenBy(m => m.Numero)
-                            .ToList();
+            var modules = db.ModulesCours
+                .Include(m => m.Cours)
+                .OrderBy(m => m.Cours.Nom)
+                .ThenBy(m => m.Numero)
+                .ToList();
             return View(modules);
         }
 
-        // GET: /ModuleCours/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -32,30 +32,32 @@ namespace Thot_projet.Controllers
         public ActionResult Create()
         {
             ViewBag.CoursId = new SelectList(db.Cours.OrderBy(c => c.Nom), "id", "Nom");
+            ViewBag.UiHelp = true; // para mostrar tips de UX en la vista
             return View();
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(
-
-            [Bind(Include = "id,CoursId,Numero,Titre")] ModuleCours m
-        )
+        public ActionResult Create([Bind(Include = "id,CoursId,Numero,Titre")] ModuleCours m)
         {
-            if (ModelState.IsValid)
+            // Validación de número único por curso
+            if (db.ModulesCours.Any(x => x.CoursId == m.CoursId && x.Numero == m.Numero))
+                ModelState.AddModelError("Numero", "Ce numéro existe déjà pour ce cours.");
+
+            if (!ModelState.IsValid)
             {
-                db.ModulesCours.Add(m);
-                db.SaveChanges();
-                TempData["ok"] = "Module créé avec succès.";
-                return RedirectToAction("Index");
+                ViewBag.CoursId = new SelectList(db.Cours.OrderBy(c => c.Nom), "id", "Nom", m.CoursId);
+                ViewBag.UiHelp = true;
+                return View(m);
             }
 
+            db.ModulesCours.Add(m);
+            db.SaveChanges();
 
-            ViewBag.CoursId = new SelectList(db.Cours.OrderBy(c => c.Nom), "id", "Nom", m.CoursId);
-            return View(m);
+            TempData["ok"] = "Module créé avec succès. Ajoutez maintenant sa première ressource (PDF, lien, etc.).";
+            // redirige a Ressource/Create con el módulo preseleccionado
+            return RedirectToAction("Create", "Ressource", new { moduleId = m.id });
         }
-
 
         public ActionResult Edit(int? id)
         {
@@ -67,22 +69,24 @@ namespace Thot_projet.Controllers
             return View(module);
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "id,CoursId,Numero,Titre")] ModuleCours m)
         {
-            if (ModelState.IsValid)
-            {
-                db.Entry(m).State = EntityState.Modified; // UPDATE
-                db.SaveChanges();
-                TempData["ok"] = "Module modifié.";
-                return RedirectToAction("Index");
-            }
-            ViewBag.CoursId = new SelectList(db.Cours.OrderBy(c => c.Nom), "id", "Nom", m.CoursId);
-            return View(m);
-        }
+            if (db.ModulesCours.Any(x => x.CoursId == m.CoursId && x.Numero == m.Numero && x.id != m.id))
+                ModelState.AddModelError("Numero", "Ce numéro existe déjà pour ce cours.");
 
+            if (!ModelState.IsValid)
+            {
+                ViewBag.CoursId = new SelectList(db.Cours.OrderBy(c => c.Nom), "id", "Nom", m.CoursId);
+                return View(m);
+            }
+
+            db.Entry(m).State = EntityState.Modified;
+            db.SaveChanges();
+            TempData["ok"] = "Module modifié.";
+            return RedirectToAction("Index");
+        }
 
         public ActionResult Delete(int? id)
         {
@@ -91,7 +95,6 @@ namespace Thot_projet.Controllers
             if (module == null) return HttpNotFound();
             return View(module);
         }
-
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -106,6 +109,5 @@ namespace Thot_projet.Controllers
             }
             return RedirectToAction("Index");
         }
-
     }
 }

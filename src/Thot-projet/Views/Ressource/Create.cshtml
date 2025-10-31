@@ -1,43 +1,106 @@
 ﻿@model Thot_projet.Models.Ressource
 @{
     ViewBag.Title = "Créer une ressource";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    var uiHelp = (bool?)ViewBag.UiHelp == true;
+    var uploadErr = Convert.ToString(ViewBag.UploadError ?? "");
 }
 <h2>Créer une ressource</h2>
 
-@using (Html.BeginForm("Create", "Ressource", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", id = "resForm" }))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    <div class="form-group">
-        @Html.Label("Module", new { @class = "control-label col-md-2" })
-        <div class="col-md-10">@Html.DropDownList("ModuleCoursId", null, "-- choisissez un module --", new { @class = "form-control" })</div>
-    </div>
+    @* OJO: dentro del @using, las estructuras de control NO llevan @ *@
+    if (!string.IsNullOrWhiteSpace(uploadErr))
+    {
+        <div class="alert alert-danger">@uploadErr</div>
+    }
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.Type, new { @class = "control-label col-md-2" })
-        <div class="col-md-10">@Html.TextBoxFor(m => m.Type, new { @class = "form-control", placeholder = "Vidéo / PDF / Lien" })</div>
-    </div>
+    <div class="form-horizontal">
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.Titre, new { @class = "control-label col-md-2" })
-        <div class="col-md-10">@Html.TextBoxFor(m => m.Titre, new { @class = "form-control", placeholder = "Titre de la ressource" })</div>
-    </div>
-
-    <div class="form-group">
-        @Html.Label("Fichier (PDF) ou URL", new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            <input type="file" name="fichier" accept="application/pdf" class="form-control" />
-            <span class="help-block">Si no subes archivo, usa el campo URL.</span>
-            @Html.TextBoxFor(m => m.url, new { @class = "form-control", placeholder = "https://..." })
+        <div class="alert alert-info" style="display:@(uiHelp ? "block" : "none")">
+            Option A: indiquez une <strong>URL</strong> (YouTube, site, etc.).
+            Option B: téléversez un <strong>PDF</strong> (Max 10MB). S’il y a un PDF, il remplace l’URL.
         </div>
-    </div>
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-success">Enregistrer</button>
-            @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+        <div class="form-group">
+            @Html.LabelFor(m => m.ModuleCoursId, "ModuleCoursId", new { @class = "control-label col-md-2" })
+            <div class="col-md-6">
+                @Html.DropDownList("ModuleCoursId", (SelectList)ViewBag.ModuleCoursId, "-- Sélectionner --", new { @class = "form-control", required = "required" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Type, new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.Type, new { @class = "form-control", maxlength = "50", placeholder = "PDF, Vidéo, Lien, etc.", required = "required" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Titre, new { @class = "control-label col-md-2" })
+            <div class="col-md-6">
+                @Html.TextBoxFor(m => m.Titre, new { @class = "form-control", maxlength = "100", placeholder = "Titre de la ressource", required = "required" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("URL", new { @class = "control-label col-md-2" })
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.url, new { @class = "form-control", maxlength = "255", type = "url", placeholder = "https:// ... (laisser vide si vous téléversez un PDF)" })
+                <span class="help-block">Option A : Indiquez un lien (YouTube, site, etc.).</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("PDF", new { @class = "control-label col-md-2" })
+            <div class="col-md-8">
+                <input type="file" name="fichier" id="fichier" accept="application/pdf,.pdf" class="form-control" />
+                <small id="fileInfo" class="text-muted"></small>
+                <span class="help-block">Option B : Téléversez un PDF (Max 10MB). Si vous ajoutez un PDF, il remplace la valeur URL.</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-6">
+                <button type="submit" class="btn btn-primary" id="btnSubmit">
+                    <span class="glyphicon glyphicon-cloud-upload"></span> Créer
+                </button>
+                <span id="spinner" class="text-info" style="display:none;margin-left:10px;">
+                    <span class="glyphicon glyphicon-refresh glyphicon-spin"></span> Téléversement...
+                </span>
+                @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px" })
+            </div>
         </div>
     </div>
 }
+
+<!-- Scripts (sin bundles) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    (function () {
+        var f = document.getElementById('fichier');
+        var info = document.getElementById('fileInfo');
+        var btn = document.getElementById('btnSubmit');
+        var spn = document.getElementById('spinner');
+        if (f) {
+            f.addEventListener('change', function () {
+                if (!f.files || !f.files.length) { info.textContent = ''; return; }
+                var file = f.files[0];
+                var mb = (file.size / 1048576).toFixed(2);
+                info.textContent = 'Sélectionné: ' + file.name + ' (' + mb + ' MB)';
+                if (!/\.pdf$/i.test(file.name)) {
+                    info.textContent += ' — ERREUR: seulement PDF';
+                }
+            });
+        }
+        document.getElementById('resForm').addEventListener('submit', function () {
+            spn.style.display = 'inline-block';
+            btn.disabled = true;
+            setTimeout(function () { btn.disabled = false; spn.style.display = 'none'; }, 12000);
+        });
+    })();
+</script>

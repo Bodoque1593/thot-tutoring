@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Thot_projet.Models.Cours>
+@{ ViewBag.Title = "Vitrine des cours"; }
+<h2>Vitrine des cours</h2>
+<div class="row">
+    @foreach (var c in Model)
+    {
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img src="@(!string.IsNullOrWhiteSpace(c.ImageUrl) ? c.ImageUrl : "https://via.placeholder.com/640x360")" alt="@c.Nom" />
+                <div class="caption">
+                    <h4>@c.Nom</h4>
+                    <p><strong>Niveau:</strong> @c.Niveau</p>
+                    <p><strong>Prix:</strong> @c.Prix.ToString("C")</p>
+                    <p>@c.Description</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

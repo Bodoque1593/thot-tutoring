@@ -1,51 +1,65 @@
 ﻿@model Thot_projet.Models.Ressource
-@{
-    ViewBag.Title = "Éditer la ressource";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-<h2>Éditer la ressource</h2>
-
-@using (Html.BeginForm())
+@{ ViewBag.Title = "Modifier la ressource"; }
+<h2>Modifier la ressource</h2>
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    @Html.HiddenFor(m => m.id) <!-- Conserver l'identifiant -->
-    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    @Html.HiddenFor(m => m.id)
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
     <div class="form-horizontal">
-        <hr />
-
         <div class="form-group">
-            @Html.LabelFor(m => m.ModuleCoursId, "Module")
-            @Html.DropDownListFor(m => m.ModuleCoursId, (SelectList)ViewBag.ModuleCoursId, "-- choisissez un module --", new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.ModuleCoursId, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.ModuleCoursId, new { @class = "control-label col-md-2" })
+            <div class="col-md-6">
+                @Html.DropDownList("ModuleCoursId", (SelectList)ViewBag.ModuleCoursId, "-- Sélectionner --", new { @class = "form-control", required = "required" })
+            </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.Type)
-            @Html.TextBoxFor(m => m.Type, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.Type, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.Type, new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.Type, new { @class = "form-control", maxlength = "50", required = "required" })
+            </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.Titre)
-            @Html.TextBoxFor(m => m.Titre, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.Titre, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.Titre, new { @class = "control-label col-md-2" })
+            <div class="col-md-6">
+                @Html.TextBoxFor(m => m.Titre, new { @class = "form-control", maxlength = "100", required = "required" })
+            </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.url)
-            @Html.TextBoxFor(m => m.url, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.url, "", new { @class = "text-danger" })
+            @Html.Label("URL actuelle", new { @class = "control-label col-md-2" })
+            <div class="col-md-8">
+                <p class="form-control-static">
+                    @* Dentro del @using: if SIN @ *@
+                    @{
+                        var hasUrl = !string.IsNullOrWhiteSpace(Model.url);
+                    }
+                    if (hasUrl) {
+                    <a href="@Model.url" target="_blank">@Model.url</a>
+                    } else {
+                    <em>Aucune</em>
+                    }
+                </p>
+                @Html.TextBoxFor(m => m.url, new { @class = "form-control", maxlength = "255", type = "url", placeholder = "Remplacer par une autre URL (laisser vide si vous téléversez un PDF)" })
+            </div>
         </div>
 
-        <input type="submit" value="Mettre à jour" class="btn btn-primary" />
-        @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default" })
+        <div class="form-group">
+            @Html.Label("Nouveau PDF", new { @class = "control-label col-md-2" })
+            <div class="col-md-8">
+                <input type="file" name="fichier" accept="application/pdf,.pdf" class="form-control" />
+                <span class="help-block">Téléversez un nouveau PDF pour remplacer l’URL précédente. Max 10MB.</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-6">
+                <button type="submit" class="btn btn-success">Enregistrer</button>
+                @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px" })
+            </div>
+        </div>
     </div>
-}
-
-@section Scripts {
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
 }

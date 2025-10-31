@@ -1,56 +1,54 @@
 ﻿@model Thot_projet.Models.EtudiantDashboardVM
 @{
-    ViewBag.Title = "Espace étudiant";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Tableau de bord (Étudiant)";
 }
-<h2>Espace étudiant</h2>
+<h2>Tableau de bord</h2>
 
 <div class="row">
     <div class="col-md-6">
-        <h3>Mes cours (inscriptions)</h3>
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Cours</th>
-                    <th>Niveau</th>
-                    <th>Inscrit le</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var i in Model.MesInscriptions)
+        <div class="panel panel-primary">
+            <div class="panel-heading"><strong>Mes dernières inscriptions</strong></div>
+            <ul class="list-group">
+                @if (!(Model?.MesInscriptions?.Any() ?? false))
                 {
-                    <tr>
-                        <td>@(i.Cours != null ? i.Cours.Nom : "-")</td>
-                        <td>@(i.Cours != null ? i.Cours.Niveau : "-")</td>
-                        <td>@i.InscritLe.ToString("yyyy-MM-dd")</td>
-                    </tr>
+                    <li class="list-group-item">Aucune inscription récente.</li>
                 }
-            </tbody>
-        </table>
+                else
+                {
+                    foreach (var i in Model.MesInscriptions)
+                    {
+                        <li class="list-group-item">
+                            <strong>@(i.Cours != null ? i.Cours.Nom : "—")</strong>
+                            <span class="text-muted"> — @i.InscritLe.ToLocalTime().ToString("yyyy-MM-dd")</span>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
     </div>
 
     <div class="col-md-6">
-        <h3>Mes questions</h3>
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Cours</th>
-                    <th>Ressource</th>
-                    <th>Créée le</th>
-                    <th>État</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var q in Model.MesQuestions)
+        <div class="panel panel-info">
+            <div class="panel-heading"><strong>Mes dernières questions</strong></div>
+            <ul class="list-group">
+                @if (!(Model?.MesQuestions?.Any() ?? false))
                 {
-                    <tr>
-                        <td>@(q.Cours != null ? q.Cours.Nom : "-")</td>
-                        <td>@(q.Ressource != null ? q.Ressource.Titre : "-")</td>
-                        <td>@q.Creele.ToString("yyyy-MM-dd HH:mm")</td>
-                        <td>@(q.EstResolvee ? "Résolue" : "Ouverte")</td>
-                    </tr>
+                    <li class="list-group-item">Aucune question pour l’instant.</li>
                 }
-            </tbody>
-        </table>
+                else
+                {
+                    foreach (var q in Model.MesQuestions)
+                    {
+                        <li class="list-group-item">
+                            <strong>@(q.Cours != null ? q.Cours.Nom : "—"):</strong> @q.Contenu
+                            <span class="label @(q.EstResolvee ? "label-success" : "label-warning")" style="margin-left:8px;">
+                                @(q.EstResolvee ? "Résolue" : "Ouverte")
+                            </span>
+                            @Html.ActionLink("Voir", "Details", "Question", new { id = q.id }, new { @class = "btn btn-xs btn-default", style = "margin-left:8px" })
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
     </div>
 </div>
