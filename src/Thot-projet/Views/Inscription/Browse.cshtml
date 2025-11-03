@@ -1,71 +1,42 @@
 ﻿@model IEnumerable<Thot_projet.Models.InscriptionBrowseVM>
-@using System.Globalization
-
 @{
     ViewBag.Title = "S'inscrire à un cours";
-    var culture = new CultureInfo("fr-CA"); // para mostrar CAD
 }
 
-<h2>Catalogue de cours</h2>
-<hr />
+<h2>S'inscrire à un cours</h2>
+<p class="text-muted">Cliquez sur “S’inscrire” pour un cours auquel vous n’êtes pas encore inscrit.</p>
 
-@if (Model == null || !Model.Any())
-{
-    <div class="alert alert-info">Aucun cours disponible pour le moment.</div>
-}
-else
-{
-    <div class="row">
-        @foreach (var v in Model)
-        {
-            <div class="col-sm-6 col-md-4">
-                <div class="panel panel-default" style="height:100%;">
-                    <div class="panel-heading">
-                        <strong>@v.Nom</strong>
-                        <span class="pull-right label label-default">Niveau @v.Niveau</span>
-                    </div>
-                    <div class="panel-body">
-                        <div class="text-center" style="margin-bottom:10px;">
-                            @{
-                                var img = string.IsNullOrWhiteSpace(v.ImageUrl)
-                                          ? "https://via.placeholder.com/400x220?text=Cours"
-                                          : v.ImageUrl;
-                            }
-                            <img src="@img" class="img-responsive img-thumbnail" style="max-height:220px; margin:0 auto;" />
-                        </div>
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "https://via.placeholder.com/640x360?text=Cours" : item.ImageUrl)"
+                     alt="@item.Nom" style="max-height:180px;width:100%;object-fit:cover;" />
+                <div class="caption">
+                    <h4 class="text-primary" title="@item.Nom">@item.Nom</h4>
+                    <p class="text-muted">Niveau: <strong>@item.Niveau</strong></p>
+                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                    {
+                        <p>@item.Description</p>
+                    }
+                    <p><span class="label label-info" style="font-size:12px;">@item.Prix.ToString("0.00") $</span></p>
 
-                        @if (!string.IsNullOrWhiteSpace(v.Description))
+                    @if (item.DejaInscrit)
+                    {
+                        <p><span class="label label-success">Déjà inscrit</span></p>
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("Enroll", "Inscription", FormMethod.Post, new { @class = "form-inline" }))
                         {
-                            <p style="min-height:48px;">@v.Description</p>
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("coursId", item.CoursId)
+                            <button type="submit" class="btn btn-primary">S’inscrire</button>
                         }
-
-                        <p>
-                            <span class="h4">@v.Prix.ToString("C", culture)</span>
-                            <span class="text-muted"> CAD</span>
-                        </p>
-                    </div>
-                    <div class="panel-footer">
-                        @if (v.DejaInscrit)
-                        {
-                            <span class="label label-success">Déjà inscrit</span>
-                            @Html.ActionLink("Mes cours", "Index", "Inscription", null, new { @class = "btn btn-link btn-xs pull-right" })
-                        }
-                        else
-                        {
-                            @* IMPORTANTE: estamos dentro de un bloque de código (if). Aquí el using va SIN @ *@
-                            using (Html.BeginForm("Enroll", "Inscription", FormMethod.Post, new { @class = "form-inline" }))
-                            {
-                                @Html.AntiForgeryToken()
-                                @Html.Hidden("coursId", v.CoursId)
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    S'inscrire
-                                </button>
-                            }
-                        }
-                        <div class="clearfix"></div>
-                    </div>
+                    }
                 </div>
             </div>
-        }
-    </div>
-}
+        </div>
+    }
+</div>

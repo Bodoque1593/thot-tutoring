@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Thot_projet.Data;
@@ -8,65 +7,60 @@ using Thot_projet.Models;
 
 namespace Thot_projet.Controllers
 {
+    // -> ahora permite Etudiant y Tuteur
     [RoleAuthorize("Etudiant", "Tuteur")]
     public class PaiementController : Controller
     {
         private readonly AppDbContext db = new AppDbContext();
 
-        private static readonly string[] MONNAIES = new[] { "CAD", "USD", "EUR" };
-        private static readonly string[] STATUTS = new[] { "Payé", "En attente", "Annulé" };
+        // LISTA DE PAGOS (para el usuario actual)
+        public ActionResult Index()
+        {
+            int uid = (int)(Session["UserId"] ?? 0);
+            var list = db.Paiements
+                         .Where(p => p.UtilisateurId == uid)
+                         .OrderByDescending(p => p.PayeLe)
+                         .ToList();
 
+            return View(list);  // Views/Paiement/Index.cshtml (ya la tienes)
+        }
+
+        // GET: /Paiement/Create  (pre-carga desde inscripción)
         [RoleAuthorize("Etudiant")]
         public ActionResult Create(decimal? Montant, string Monnaie = "CAD", string Statut = "Payé")
         {
-            ViewBag.Monnaies = MONNAIES;
-            ViewBag.Statuts = STATUTS;
+            ViewBag.Monnaies = new[] { "CAD", "USD", "EUR" };
+            ViewBag.Statuts = new[] { "Payé", "En attente", "Annulé" };
 
-            // mostramos con coma para fr-CA (lo que ves en la UI)
-            var fr = CultureInfo.GetCultureInfo("fr-CA");
-            ViewBag.MontantStr = (Montant ?? 0.01m).ToString("0.##", fr);
-            ViewBag.Monnaie = MONNAIE_OK(Monnaie) ? Monnaie : "CAD";
-            ViewBag.Statut = STATUT_OK(Statut) ? Statut : "Payé";
-
+            ViewBag.Montant = Montant ?? 0.01m;
+            ViewBag.Monnaie = Monnaie;
+            ViewBag.Statut = Statut;
             return View();
         }
 
+        // POST: /Paiement/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [RoleAuthorize("Etudiant")]
-        public ActionResult Create(string Montant, string Monnaie, string Statut)
+        public ActionResult Create(decimal Montant, string Monnaie, string Statut)
         {
             int uid = (int)(Session["UserId"] ?? 0);
 
-            // Parsear monto aceptando COMA o PUNTO
-            decimal montantVal = 0m;
-            bool parsed =
-                decimal.TryParse(Montant, NumberStyles.Number, CultureInfo.GetCultureInfo("fr-CA"), out montantVal) ||
-                decimal.TryParse(Montant, NumberStyles.Number, CultureInfo.GetCultureInfo("en-US"), out montantVal);
-
-            if (!parsed || montantVal <= 0)
-                ModelState.AddModelError("Montant", "Montant invalide (> 0).");
-
-            if (!MONNAIE_OK(Monnaie))
-                ModelState.AddModelError("Monnaie", "Monnaie invalide.");
-
-            if (!STATUT_OK(Statut))
-                ModelState.AddModelError("Statut", "Statut invalide.");
+            if (Montant <= 0) ModelState.AddModelError("Montant", "Le montant doit être > 0.");
+            if (string.IsNullOrWhiteSpace(Monnaie)) ModelState.AddModelError("Monnaie", "La monnaie est requise.");
+            if (string.IsNullOrWhiteSpace(Statut)) ModelState.AddModelError("Statut", "Le statut est requis.");
 
             if (!ModelState.IsValid)
             {
-                ViewBag.Monnaies = MONNAIES;
-                ViewBag.Statuts = STATUTS;
-                ViewBag.MontantStr = Montant;  // conservar lo que escribió
-                ViewBag.Monnaie = Monnaie;
-                ViewBag.Statut = Statut;
+                ViewBag.Monnaies = new[] { "CAD", "USD", "EUR" };
+                ViewBag.Statuts = new[] { "Payé", "En attente", "Annulé" };
                 return View();
             }
 
             db.Paiements.Add(new Paiement
             {
                 UtilisateurId = uid,
-                Montant = montantVal,
+                Montant = Montant,
                 Monnaie = Monnaie.Trim(),
                 Statut = Statut.Trim(),
                 PayeLe = DateTime.UtcNow
@@ -75,20 +69,6 @@ namespace Thot_projet.Controllers
 
             TempData["ok"] = "Paiement enregistré.";
             return RedirectToAction("Index");
-        }
-
-        private bool MONNAIE_OK(string m) => MONNAIES.Contains((m ?? "").Trim());
-        private bool STATUT_OK(string s) => STATUTS.Contains((s ?? "").Trim());
-
-        // Listado simple de pagos del usuario
-        [RoleAuthorize("Etudiant")]
-        public ActionResult Index()
-        {
-            int uid = (int)(Session["UserId"] ?? 0);
-            var list = db.Paiements.Where(p => p.UtilisateurId == uid)
-                                   .OrderByDescending(p => p.PayeLe)
-                                   .ToList();
-            return View(list);
         }
     }
 }

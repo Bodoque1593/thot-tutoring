@@ -1,32 +1,91 @@
 ﻿@model IEnumerable<Thot_projet.Models.Question>
+@using System.Reflection
 @{
     ViewBag.Title = "Questions";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Helper: obtiene el valor de la PK aunque no se llame "Id"
+    Func<object, object> getKey = (obj) =>
+    {
+        if (obj == null) return null;
+        var t = obj.GetType();
+        var p = t.GetProperty("Id")
+             ?? t.GetProperty("ID")
+             ?? t.GetProperty("QuestionId")
+             ?? t.GetProperty("IdQuestion");
+        return p != null ? p.GetValue(obj, null) : null;
+    };
 }
+
 <h2>Questions</h2>
 
-<p>@Html.ActionLink("Poser une question", "Create", "Question", null, new { @class = "btn btn-primary" })</p>
+@if (TempData["ok"] != null)
+{
+    <div class="alert alert-success">@TempData["ok"]</div>
+}
+@if (TempData["err"] != null)
+{
+    <div class="alert alert-danger">@TempData["err"]</div>
+}
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Étudiant</th>
             <th>Cours</th>
             <th>Ressource</th>
-            <th>Extrait</th>
-            <th>Créée le</th>
+            <th>État</th>
+            <th>Contenu</th>
+            <th style="width:120px;">Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var q in Model ?? Enumerable.Empty<Thot_projet.Models.Question>())
+        @if (Model != null && Model.Any())
         {
-            <tr>
-                <td>@(q.Etudiant?.Nomcomplet ?? "-")</td>
-                <td>@(q.Cours?.Nom ?? "-")</td>
-                <td>@(q.Ressource?.Titre ?? "-")</td>
-                <td>@(string.IsNullOrWhiteSpace(q.Contenu) ? "-" : (q.Contenu.Length > 60 ? q.Contenu.Substring(0, 60) + "..." : q.Contenu))</td>
-                <td>@q.Creele.ToString("yyyy-MM-dd HH:mm")</td>
-            </tr>
+            foreach (var q in Model)
+            {
+                var coursNom = (q.Ressource != null && q.Ressource.ModuleCours != null && q.Ressource.ModuleCours.Cours != null)
+                    ? (q.Ressource.ModuleCours.Cours.Nom ?? "--")
+                    : "--";
+
+                var resTitre = (q.Ressource != null ? (q.Ressource.Titre ?? "--") : "--");
+
+                var key = getKey(q);  // <<--- aquí recuperamos la PK real
+
+                <tr>
+                    <td>@coursNom</td>
+                    <td>@resTitre</td>
+                    <td>
+                        @if (q.EstResolvee)
+                        {
+                            <span class="label label-success">Résolue</span>
+                        }
+                        else
+                        {
+                            <span class="label label-warning">Ouverte</span>
+                        }
+                    </td>
+                    <td>@(q.Contenu ?? "")</td>
+                    <td>
+                        @if (key != null)
+                        {
+                            @Html.ActionLink(
+                                "Voir",
+                                "Details",
+                                "Question",
+                                new { id = key },                   // <- sin q.Id
+                                new { @class = "btn btn-primary btn-sm" }
+                            )
+                        }
+                        else
+                        {
+                            <span class="text-muted">Id inconnu</span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="5">Aucune question.</td></tr>
         }
     </tbody>
 </table>

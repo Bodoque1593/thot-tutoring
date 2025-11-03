@@ -2,7 +2,8 @@
 using System.Web.Mvc;
 using Thot_projet.Data;
 using Thot_projet.Infrastructure;
-using Thot_projet.Models;
+using Thot_projet.Models;        // para OrderBy/Take
+using System.Data.Entity;
 
 namespace Thot_projet.Controllers
 {
@@ -11,28 +12,27 @@ namespace Thot_projet.Controllers
     {
         private readonly AppDbContext db = new AppDbContext();
 
-        public ActionResult Dashboard()
-        {
-            int uid = (int)(Session["UserId"] ?? 0);
+   public ActionResult Dashboard()
+{
+    int uid = (int)(Session["UserId"] ?? 0);
 
-            var vm = new EtudiantDashboardVM
-            {
-                // Mis cursos (inscripciones)
-                MesInscriptions = db.Inscriptions
-                    .Where(i => i.UtilisateurId == uid)
-                    .OrderByDescending(i => i.InscritLe)
-                    .Take(10)
-                    .ToList(),
+    var vm = new Thot_projet.Models.EtudiantDashboardVM
+    {
+        MesInscriptions = db.Inscriptions
+            .Include(i => i.Cours)                // para mostrar nombre/nivel
+            .Where(i => i.UtilisateurId == uid)
+            .OrderByDescending(i => i.InscritLe)
+            .Take(10)
+            .ToList(),
 
-                // Mis preguntas
-                MesQuestions = db.Questions
-                    .Where(q => q.EtudiantId == uid)
-                    .OrderByDescending(q => q.Creele)
-                    .Take(10)
-                    .ToList()
-            };
+        MesQuestions = db.Questions
+            .Where(q => q.EtudiantId == uid)
+            .OrderByDescending(q => q.Creele)
+            .Take(10)
+            .ToList()
+    };
 
-            return View(vm);
+    return View(vm);
         }
     }
 }

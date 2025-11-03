@@ -1,61 +1,66 @@
 ﻿@model Thot_projet.Models.TuteurDashboardVM
 @{
-    ViewBag.Title = "Tableau de bord (Tuteur)";
+    ViewBag.Title = "Tableau de bord";
 }
+
 <h2>Tableau de bord</h2>
 
 <div class="row">
-    <div class="col-md-7">
+    <div class="col-md-8">
         <div class="panel panel-warning">
             <div class="panel-heading"><strong>Questions ouvertes</strong></div>
             <table class="table table-striped">
                 <thead>
-                    <tr><th>Cours</th><th>Contenu</th><th>Créée</th><th></th></tr>
+                    <tr>
+                        <th>Cours</th>
+                        <th>Contenu</th>
+                        <th>Créée</th>
+                        <th></th>
+                    </tr>
                 </thead>
                 <tbody>
-                    @if (!(Model?.QuestionsOuvertes?.Any() ?? false))
-                    {
-                        <tr><td colspan="4">Aucune question ouverte.</td></tr>
-                    }
-                    else
+                    @if (Model.QuestionsOuvertes != null && Model.QuestionsOuvertes.Any())
                     {
                         foreach (var q in Model.QuestionsOuvertes)
                         {
                             <tr>
-                                <td>@(q.Cours != null ? q.Cours.Nom : "—")</td>
+                                <td>@(q.Cours != null ? q.Cours.Nom : "-")</td>
                                 <td>@q.Contenu</td>
-                                <td>@q.Creele.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
-                                <td>@Html.ActionLink("Répondre", "Answer", "Question", new { id = q.id }, new { @class = "btn btn-xs btn-success" })</td>
+                                <td>@q.Creele</td>
+                                <td>
+                                    <a class="btn btn-xs btn-success"
+                                       href="@Url.Action("Details", "Question", new { id = q.id })">Répondre</a>
+                                </td>
                             </tr>
                         }
+                    }
+                    else
+                    {
+                        <tr><td colspan="4">Aucune question ouverte.</td></tr>
                     }
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div class="col-md-5">
+    <div class="col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading"><strong>Mes sessions de clavardage</strong></div>
-            <ul class="list-group">
-                @if (!(Model?.MesChats?.Any() ?? false))
+            <div class="panel-body">
+                @if (Model.MesChats != null && Model.MesChats.Any())
                 {
-                    <li class="list-group-item">Aucune session.</li>
+                    <ul class="list-unstyled">
+                        @foreach (var s in Model.MesChats)
+                        {
+                            <li>Session #@s.id · @s.DemarreLe</li>
+                        }
+                    </ul>
                 }
                 else
                 {
-                    foreach (var s in Model.MesChats)
-                    {
-                        <li class="list-group-item">
-                            Étudiant #@s.EtudiantId — Démarrée: @s.DemarreLe.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
-                            @if (s.TermineLe.HasValue)
-                            {
-                                <span class="text-muted"> | Terminée: @s.TermineLe.Value.ToLocalTime().ToString("HH:mm")</span>
-                            }
-                        </li>
-                    }
+                    <span>Aucune session.</span>
                 }
-            </ul>
+            </div>
         </div>
     </div>
 </div>

@@ -1,70 +1,86 @@
 ﻿@model Thot_projet.Models.Question
 @{
     ViewBag.Title = "Détails de la question";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    var role = Convert.ToString(Session["UserRole"] ?? "");
-    var isTuteur = string.Equals(role, "Tuteur", StringComparison.OrdinalIgnoreCase);
+
+    var coursNom = (Model != null && Model.Ressource != null &&
+                    Model.Ressource.ModuleCours != null &&
+                    Model.Ressource.ModuleCours.Cours != null)
+                   ? (Model.Ressource.ModuleCours.Cours.Nom ?? "--")
+                   : "--";
+
+    var resTitre = (Model != null && Model.Ressource != null)
+                   ? (Model.Ressource.Titre ?? "Ressource")
+                   : "Ressource";
+
+    var routeId = ViewContext.RouteData.Values["id"] != null
+        ? ViewContext.RouteData.Values["id"].ToString()
+        : "";
 }
-<h2>Question</h2>
 
-<dl class="dl-horizontal">
-    <dt>Étudiant</dt>
-    <dd>@(Model.Etudiant?.Nomcomplet ?? Model.Etudiant?.Email ?? "-")</dd>
-    <dt>Cours</dt>
-    <dd>@(Model.Cours?.Nom ?? "-")</dd>
-    <dt>Ressource</dt>
-    <dd>@(Model.Ressource?.Titre ?? "-")</dd>
-    <dt>Créée le</dt>
-    <dd>@Model.Creele.ToString("yyyy-MM-dd HH:mm")</dd>
-    <dt>État</dt>
-    <dd>@(Model.EstResolvee ? "Résolue" : "Ouverte")</dd>
-</dl>
+<h2>Détails de la question</h2>
 
-<h3>Contenu</h3>
-<p>@Model.Contenu</p>
+@if (TempData["ok"] != null)
+{
+    <div class="alert alert-success">@TempData["ok"]</div>
+}
+@if (TempData["err"] != null)
+{
+    <div class="alert alert-danger">@TempData["err"]</div>
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>@coursNom</strong> · Ressource : @resTitre
+        @if (Model != null && Model.EstResolvee)
+        {
+            <span class="label label-success" style="margin-left:8px;">Résolue</span>
+        }
+        else
+        {
+            <span class="label label-warning" style="margin-left:8px;">Ouverte</span>
+        }
+    </div>
+    <div class="panel-body">
+        <p>@(Model != null ? Model.Contenu : "")</p>
+    </div>
+</div>
 
 <h3>Réponses</h3>
-@if (!Model.Reponses.Any())
+@{
+    var reps = (Model != null && Model.Reponses != null)
+        ? Model.Reponses
+        : Enumerable.Empty<Thot_projet.Models.Reponse>();
+}
+
+@if (!reps.Any())
 {
-    <p><em>Pas de réponses pour l'instant.</em></p>
+    <p>Aucune réponse pour l'instant.</p>
 }
 else
 {
     <ul class="list-group">
-        @foreach (var r in Model.Reponses.OrderByDescending(x => x.Creele))
+        @foreach (var r in reps)
         {
             <li class="list-group-item">
-                <strong>@(r.Tuteur?.Nomcomplet ?? r.Tuteur?.Email ?? "Tuteur")</strong>
-                <span class="text-muted"> (@r.Creele.ToString("yyyy-MM-dd HH:mm"))</span>
-                <div style="margin-top:5px">@r.Contenu</div>
+                <div>@r.Contenu</div>
             </li>
         }
     </ul>
 }
 
-@if (isTuteur)
+@if (Model != null && !Model.EstResolvee)
 {
-    <h3>Ajouter une réponse</h3>
-    @using (Html.BeginForm("Repondre", "Question", FormMethod.Post, new { @class = "form" }))
+    <h3>Répondre</h3>
+    using (Html.BeginForm("Answer", "Question", FormMethod.Post, new { @class = "form" }))
     {
         @Html.AntiForgeryToken()
-        @Html.Hidden("questionId", Model.id)
-        <div class="form-group">
-            <textarea name="contenu" class="form-control" rows="4" placeholder="Votre réponse..."></textarea>
-        </div>
-        <button type="submit" class="btn btn-success">Répondre</button>
-    }
-    @if (!Model.EstResolvee)
-    {
-        // Dentro del @if ya estás en C#. El 'using' va SIN @
-        using (Html.BeginForm("MarquerResolvee", "Question", FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-            @Html.Hidden("id", Model.id)
-            <button type="submit" class="btn btn-success btn-xs">
-                Marquer comme résolue
-            </button>
-        }
-    }
+        @Html.Hidden("id", routeId)
 
+        <div class="form-group">
+            @Html.TextArea("contenu", null, new { @class = "form-control", rows = 4, placeholder = "Écrire votre réponse..." })
+        </div>
+
+        <button type="submit" class="btn btn-success">Répondre</button>
+        @Html.ActionLink("Retour", "Index", "Question", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+    }
 }

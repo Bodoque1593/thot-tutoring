@@ -1,56 +1,51 @@
 ﻿@{
     ViewBag.Title = "Paiement";
-    var monnaies = (string[])ViewBag.Monnaies;
-    var statuts = (string[])ViewBag.Statuts;
-    string montantStr = Convert.ToString(ViewBag.MontantStr ?? "0,01");
-    string monnaieSel = Convert.ToString(ViewBag.Monnaie ?? "CAD");
-    string statutSel = Convert.ToString(ViewBag.Statut ?? "Payé");
+    var montant = (decimal)ViewBag.Montant;
+    var monnaie = (string)ViewBag.Monnaie;
+    var statut = (string)ViewBag.Statut;
 }
 <h2>Paiement</h2>
-<hr />
 
-@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal" }))
+@using (Html.BeginForm("Create", "Paiement", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-    <div class="form-group">
-        <label class="control-label col-md-2">Montant</label>
-        <div class="col-md-4">
-            <input name="Montant" class="form-control"
-                   value="@montantStr" placeholder="Ex: 12,00" />
-            <span class="help-block">Utilisez virgule ou point (12,00 / 12.00)</span>
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2">Montant</label>
+            <div class="col-md-4">
+                <input type="text" name="Montant" value="@montant.ToString("0.00")" class="form-control" />
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-md-2">Monnaie</label>
-        <div class="col-md-4">
-            <select name="Monnaie" class="form-control">
-                @foreach (var m in monnaies)
-                {
-                    <option value="@m" @(m == monnaieSel ? "selected" : "")>@m</option>
-                }
-            </select>
+        <div class="form-group">
+            <label class="control-label col-md-2">Monnaie</label>
+            <div class="col-md-4">
+                <select name="Monnaie" class="form-control">
+                    @foreach (var m in (string[])ViewBag.Monnaies)
+                    {
+                        <option value="@m" @(m == monnaie ? "selected" : "")>@m</option>
+}
+                </select>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-md-2">Statut</label>
-        <div class="col-md-4">
-            <select name="Statut" class="form-control">
-                @foreach (var s in statuts)
-                {
-                    <option value="@s" @(s == statutSel ? "selected" : "")>@s</option>
-                }
-            </select>
+        <div class="form-group">
+            <label class="control-label col-md-2">Statut</label>
+            <div class="col-md-4">
+                <select name="Statut" class="form-control">
+                    @foreach (var s in (string[])ViewBag.Statuts)
+                    {
+                        <option value="@s" @(s == statut ? "selected" : "")>@s</option>
+}
+                </select>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-4">
-            <button type="submit" class="btn btn-success">Payer</button>
-            @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px" })
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-4">
+                <button type="submit" class="btn btn-success">Payer</button>
+                <a href="@Url.Action("Index","Inscription")" class="btn btn-default">Annuler</a>
+            </div>
         </div>
     </div>
 }

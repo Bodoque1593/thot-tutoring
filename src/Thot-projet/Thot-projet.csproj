@@ -211,6 +211,7 @@
     <Content Include="Views\Question\Answer.cshtml" />
     <Content Include="Views\Cours\Vitrine.cshtml" />
     <Content Include="Views\Paiement\Index.cshtml" />
+    <Content Include="Views\EntreeFAQ\Create.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
