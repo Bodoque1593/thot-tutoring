@@ -13,7 +13,8 @@ namespace Thot_projet.Controllers
     {
         private readonly AppDbContext db = new AppDbContext();
 
-        private static string GenererMotDePasse(int longueur = 12) // just 12
+        // Génère un mot de passe lisible (12 chars) – usage ponctuel (admin / premier accès)
+        private static string GenererMotDePasse(int longueur = 12)
         {
             const string alpha = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
             const string digits = "23456789";
@@ -21,21 +22,14 @@ namespace Thot_projet.Controllers
             string alphabet = alpha + digits + symbols;
 
             var bytes = new byte[longueur];
-            using (var rng = RandomNumberGenerator.Create()) // OJO
-                rng.GetBytes(bytes);
-
-            //---------ojo---------
+            using (var rng = RandomNumberGenerator.Create()) rng.GetBytes(bytes);
 
             var sb = new StringBuilder(longueur);
-
-            for (int i = 0; i < longueur; i++)
-                sb.Append(alphabet[bytes[i] % alphabet.Length]);
+            for (int i = 0; i < longueur; i++) sb.Append(alphabet[bytes[i] % alphabet.Length]);
             return sb.ToString();
         }
 
-     
-
-
+        // ---- Connexion ------------------------------------------------------
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
@@ -43,15 +37,7 @@ namespace Thot_projet.Controllers
             return View(new LoginViewModel());
         }
 
-
-
-
-
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-
-
+        [HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
         public ActionResult Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid) return View(model);
@@ -61,124 +47,80 @@ namespace Thot_projet.Controllers
             var role = (model.Role ?? "").Trim();
 
             var user = db.Utilisateurs.FirstOrDefault(u => u.Email.ToLower() == email);
-
-            if (user == null)
-            {
-                ModelState.AddModelError("", "Utilisateur inexistant.");
-                return View(model);
-            }
-
-            if (string.IsNullOrWhiteSpace(user.Motdepasse) ||
-                !string.Equals(user.Motdepasse.Trim(), pass, StringComparison.Ordinal))
-            {
-                ModelState.AddModelError("", "Mot de passe invalide.");
-                return View(model);
-            }
-
+            if (user == null) { ModelState.AddModelError("", "Utilisateur inexistant."); return View(model); }
+            if (string.IsNullOrWhiteSpace(user.Motdepasse) || !string.Equals(user.Motdepasse.Trim(), pass, StringComparison.Ordinal))
+            { ModelState.AddModelError("", "Mot de passe invalide."); return View(model); }
             if (!string.Equals(user.Role ?? "", role, StringComparison.OrdinalIgnoreCase))
-            {
-                ModelState.AddModelError("", "Role incorrect pour cet utilisateur.");
-                return View(model);
-            }
-            //---------------------------------------
+            { ModelState.AddModelError("", "Rôle incorrect pour cet utilisateur."); return View(model); }
+
+            // Session d'appli + cookie forms
             FormsAuthentication.SetAuthCookie(user.Email, model.Mesouvenir);
             Session["UserId"] = user.id;
-            Session["UserRole"] = user.Role; 
+            Session["UserRole"] = user.Role;
             Session["UserName"] = string.IsNullOrWhiteSpace(user.Nomcomplet) ? user.Email : user.Nomcomplet;
 
-            // Redireccion
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                return Redirect(returnUrl);
-
-            if (string.Equals(user.Role ?? "", "Tuteur", StringComparison.OrdinalIgnoreCase))
-                return RedirectToAction("Dashboard", "Tuteur");
-
-            return RedirectToAction("Dashboard", "Etudiant");
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)) return Redirect(returnUrl);
+            return string.Equals(user.Role ?? "", "Tuteur", StringComparison.OrdinalIgnoreCase)
+                ? RedirectToAction("Dashboard", "Tuteur")
+                : RedirectToAction("Dashboard", "Etudiant");
         }
 
-      
+        // ---- Inscription ----------------------------------------------------
         [AllowAnonymous]
-        public ActionResult Register()
-        {
-            return View(new RegisterViewModel());
-        }
+        public ActionResult Register() => View(new RegisterViewModel());
 
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-
-
-
+        [HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
         public ActionResult Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
 
             var email = (model.Email ?? "").Trim().ToLower();
-
-            var existe = db.Utilisateurs.Any(u => u.Email.ToLower() == email);
-            if (existe)
-            {
-                ModelState.AddModelError("Email", "Ce courriel est déja utilisé.");
-                return View(model);
-            }
+            if (db.Utilisateurs.Any(u => u.Email.ToLower() == email))
+            { ModelState.AddModelError("Email", "Ce courriel est déjà utilisé."); return View(model); }
 
             var user = new Utilisateur
             {
                 Email = email,
                 Nomcomplet = (model.Nomcomplet ?? "").Trim(),
                 Role = (model.Role ?? "").Trim(),
-                Motdepasse = (model.Motdepasse ?? "").Trim(),  // Texto plano 
+                Motdepasse = (model.Motdepasse ?? "").Trim(),  // texte brut (hypothèse du cours)
                 Creele = DateTime.UtcNow
             };
-
             db.Utilisateurs.Add(user);
             db.SaveChanges();
 
-            // Autologin tras registro
+            // Connexion directe post-inscription
             FormsAuthentication.SetAuthCookie(user.Email, false);
-            Session["UserId"] = user.id;
-            Session["UserRole"] = user.Role;
+            Session["UserId"] = user.id; Session["UserRole"] = user.Role;
             Session["UserName"] = string.IsNullOrWhiteSpace(user.Nomcomplet) ? user.Email : user.Nomcomplet;
 
-            // Redirige  dashboard
-            if (string.Equals(user.Role ?? "", "Tuteur", StringComparison.OrdinalIgnoreCase))
-                return RedirectToAction("Dashboard", "Tuteur");
-
-            return RedirectToAction("Dashboard", "Etudiant");
+            return string.Equals(user.Role ?? "", "Tuteur", StringComparison.OrdinalIgnoreCase)
+                ? RedirectToAction("Dashboard", "Tuteur")
+                : RedirectToAction("Dashboard", "Etudiant");
         }
 
-        //Reset de clave para admin/primer uso
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        // Génération d’un mot de passe (admin / premier usage)
+        [HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
         public ActionResult GenererMdp(string email, string role)
         {
             var mail = (email ?? "").Trim().ToLower();
             var user = db.Utilisateurs.FirstOrDefault(u => u.Email.ToLower() == mail);
-
-            if (user == null)
-            {
-                TempData["err"] = "Courriel inexistant.";
-                return RedirectToAction("Login");
-            }
+            if (user == null) { TempData["err"] = "Courriel inexistant."; return RedirectToAction("Login"); }
 
             if (!string.IsNullOrWhiteSpace(role) &&
                 !string.Equals(user.Role ?? "", role.Trim(), StringComparison.OrdinalIgnoreCase))
-            {
-                TempData["err"] = "Le rôle ne correspond pas à l'utilisateur.";
-                return RedirectToAction("Login");
-            }
+            { TempData["err"] = "Le rôle ne correspond pas à l'utilisateur."; return RedirectToAction("Login"); }
 
             var nouveau = GenererMotDePasse(12);
             user.Motdepasse = nouveau;
             db.SaveChanges();
 
             TempData["ok"] = $"Mot de passe généré pour {user.Email}.";
-            TempData["mdp"] = nouveau; // se muestra una sola vez
+            TempData["mdp"] = nouveau; // affiché une seule fois
             return RedirectToAction("Login");
         }
 
-
+        // ---- Déconnexion ----------------------------------------------------
         [Authorize]
         public ActionResult Logout()
         {

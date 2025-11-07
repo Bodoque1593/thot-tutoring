@@ -210,6 +210,9 @@
     <Content Include="Views\Paiement\Index.cshtml" />
     <Content Include="Views\EntreeFAQ\Create.cshtml" />
     <Content Include="Views\Paiement\IndexAll.cshtml" />
+    <Content Include="Views\Question\DemandeRencontre.cshtml" />
+    <Content Include="Views\Question\Index_Etudiant.cshtml" />
+    <Content Include="Views\Question\Index_Tuteur.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

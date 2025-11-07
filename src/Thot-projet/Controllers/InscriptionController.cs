@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using Thot_projet.Data;
 using Thot_projet.Infrastructure;
 using Thot_projet.Models;
+using System.Data.Entity;
 
 namespace Thot_projet.Controllers
 {
@@ -12,17 +13,18 @@ namespace Thot_projet.Controllers
     {
         private readonly AppDbContext db = new AppDbContext();
 
+        // Helpers de session (simple et robustes)
         private int? CurrentUserId() => Session["UserId"] as int?;
-        private bool IsEtudiant()
-            => string.Equals(Convert.ToString(Session["UserRole"]), "Etudiant", StringComparison.OrdinalIgnoreCase);
+        private bool IsEtudiant() => string.Equals(Convert.ToString(Session["UserRole"]), "Etudiant", StringComparison.OrdinalIgnoreCase);
 
-        // GET: /Inscription  (Mes cours)
+        // Mes cours
         public ActionResult Index()
         {
             var uid = CurrentUserId();
             if (uid == null) return RedirectToAction("Login", "Auth");
 
             var list = db.Inscriptions
+                         .Include(i => i.Cours)           // ← carga el curso
                          .Where(i => i.UtilisateurId == uid.Value)
                          .OrderByDescending(i => i.InscritLe)
                          .ToList();
@@ -30,93 +32,55 @@ namespace Thot_projet.Controllers
             return View(list);
         }
 
-        // GET: /Inscription/Browse  (catálogo de cursos para inscribirse)
+        // Catalogue pour s’inscrire
         [HttpGet]
         public ActionResult Browse()
         {
-            var uid = CurrentUserId();
-            if (uid == null || !IsEtudiant()) return RedirectToAction("Login", "Auth");
+            var uid = CurrentUserId(); if (uid == null || !IsEtudiant()) return RedirectToAction("Login", "Auth");
 
-            var misIds = db.Inscriptions
-                           .Where(i => i.UtilisateurId == uid.Value)
-                           .Select(i => i.CoursId)
-                           .ToList();
+            var misIds = db.Inscriptions.Where(i => i.UtilisateurId == uid.Value).Select(i => i.CoursId).ToList();
 
-            var vms = db.Cours
-                .OrderBy(c => c.Nom)
-                .Select(c => new InscriptionBrowseVM
-                {
-                    CoursId = c.id,
-                    Nom = c.Nom,
-                    Niveau = c.Niveau,
-                    Prix = c.Prix,
-                    ImageUrl = c.ImageUrl,
-                    Description = c.Description,
-                    DejaInscrit = misIds.Contains(c.id)
-                })
-                .ToList();
+            var vms = db.Cours.OrderBy(c => c.Nom).Select(c => new InscriptionBrowseVM
+            {
+                CoursId = c.id,
+                Nom = c.Nom,
+                Niveau = c.Niveau,
+                Prix = c.Prix,
+                ImageUrl = c.ImageUrl,
+                Description = c.Description,
+                DejaInscrit = misIds.Contains(c.id)
+            }).ToList();
 
-            return View(vms); // Views/Inscription/Browse.cshtml
+            return View(vms);
         }
 
-        // POST: /Inscription/Enroll
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        // S’inscrire
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Enroll(int coursId)
         {
-            var uid = CurrentUserId();
-            if (uid == null || !IsEtudiant()) return RedirectToAction("Login", "Auth");
+            var uid = CurrentUserId(); if (uid == null || !IsEtudiant()) return RedirectToAction("Login", "Auth");
 
-            var yaExiste = db.Inscriptions.Any(i => i.UtilisateurId == uid.Value && i.CoursId == coursId);
-            if (yaExiste)
-            {
-                TempData["err"] = "Vous êtes déjà inscrit à ce cours.";
-                return RedirectToAction("Index");
-            }
+            if (db.Inscriptions.Any(i => i.UtilisateurId == uid.Value && i.CoursId == coursId))
+            { TempData["err"] = "Vous êtes déjà inscrit à ce cours."; return RedirectToAction("Index"); }
 
-            db.Inscriptions.Add(new Inscription
-            {
-                UtilisateurId = uid.Value,
-                CoursId = coursId,
-                InscritLe = DateTime.UtcNow
-            });
+            db.Inscriptions.Add(new Inscription { UtilisateurId = uid.Value, CoursId = coursId, InscritLe = DateTime.UtcNow });
             db.SaveChanges();
-
             TempData["ok"] = "Inscription réussie.";
 
-            // flujo de pago si el curso tiene precio (> 0)
-            var prix = db.Cours.Where(c => c.id == coursId)
-                               .Select(c => c.Prix)
-                               .FirstOrDefault();
-
-            if (prix > 0)
-            {
-                // la action Create del PaiementController admite: Create(decimal? Montant, string Monnaie, string Statut)
-                return RedirectToAction(
-                    "Create",
-                    "Paiement",
-                    new { Montant = prix, Monnaie = "CAD", Statut = "Payé" }
-                );
-            }
-
-            return RedirectToAction("Index");
+            var prix = db.Cours.Where(c => c.id == coursId).Select(c => c.Prix).FirstOrDefault();
+            return (prix > 0)
+                ? RedirectToAction("Create", "Paiement", new { Montant = prix, Monnaie = "CAD", Statut = "Payé" })
+                : RedirectToAction("Index");
         }
 
-        // POST: /Inscription/Unenroll
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        // Se désinscrire
+        [HttpPost, ValidateAntiForgeryToken]
         public ActionResult Unenroll(int coursId)
         {
-            var uid = CurrentUserId();
-            if (uid == null || !IsEtudiant()) return RedirectToAction("Login", "Auth");
+            var uid = CurrentUserId(); if (uid == null || !IsEtudiant()) return RedirectToAction("Login", "Auth");
 
             var ins = db.Inscriptions.FirstOrDefault(i => i.UtilisateurId == uid.Value && i.CoursId == coursId);
-            if (ins != null)
-            {
-                db.Inscriptions.Remove(ins);
-                db.SaveChanges();
-                TempData["ok"] = "Inscription supprimée.";
-            }
+            if (ins != null) { db.Inscriptions.Remove(ins); db.SaveChanges(); TempData["ok"] = "Inscription supprimée."; }
             return RedirectToAction("Browse");
         }
     }

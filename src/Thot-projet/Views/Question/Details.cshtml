@@ -48,16 +48,24 @@ else
 @if (Model != null && !Model.EstResolvee)
 {
     <h3>Répondre</h3>
-    using (Html.BeginForm("Answer", "Question", FormMethod.Post, new { @class = "form" }))
+    using (Html.BeginForm("Answer", "Question", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
-        @Html.Hidden("id", routeId)
+        @Html.Hidden("id", Model.id)
 
-        <div class="form-group">
-            @Html.TextArea("contenu", null, new { @class = "form-control", rows = 4, placeholder = "Écrire votre réponse..." })
+        <!-- FR: champ vide pour ne pas réutiliser le texte précédent -->
+        <textarea name="contenu" class="form-control" rows="3"
+                  placeholder="Écrire votre réponse..."></textarea>
+
+        <!-- FR: par défaut on coche pour marquer comme résolue -->
+        <div class="checkbox" style="margin-top:8px">
+            <label>
+                <input type="checkbox" name="resoudre" checked />
+                Marquer la question comme résolue
+            </label>
         </div>
 
-        <button type="submit" class="btn btn-success">Répondre</button>
-        @Html.ActionLink("Retour", "Index", "Question", null, new { @class = "btn btn-default", style = "margin-left:8px" })
+        <button type="submit" class="btn btn-success" style="margin-top:8px">Répondre</button>
+        @Html.ActionLink("Retour", "Index_Tuteur", "Question", null, new { @class = "btn btn-default", style = "margin-top:8px;margin-left:8px" })
     }
 }

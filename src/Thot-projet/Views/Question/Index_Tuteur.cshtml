@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Thot_projet.Models.Question>
+@{
+    ViewBag.Title = "Questions non résolues";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Questions non résolues</h2>
+
+@* Messages flash (cohérence UI) *@
+@if (TempData["ok"] != null)
+{
+    <div class="alert alert-success"><span class="glyphicon glyphicon-ok-sign"></span> @TempData["ok"]</div>
+}
+@if (TempData["err"] != null)
+{
+    <div class="alert alert-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> @TempData["err"]</div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <p><em>Aucune question ouverte.</em></p>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Étudiant</th>
+                <th>Cours</th>
+                <th>Ressource</th>
+                <th>Créée le</th>
+                <th style="width:120px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var q in Model.OrderByDescending(x => x.Creele))
+            {
+                // Affichages robustes (null-safe)
+                var etuNom = q.Etudiant != null ? (string.IsNullOrWhiteSpace(q.Etudiant.Nomcomplet) ? (q.Etudiant.Email ?? "-") : q.Etudiant.Nomcomplet) : "-";
+                var coursNom = q.Cours != null ? (q.Cours.Nom ?? "-") : "-";
+                var resTitre = q.Ressource != null ? (q.Ressource.Titre ?? "-") : "-";
+
+                <tr>
+                    <td>@etuNom</td>
+                    <td>@coursNom</td>
+                    <td>@resTitre</td>
+                    <td>@q.Creele.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @* Pour répondre, on va aux détails et on poste depuis là (ton flux actuel) *@
+                        @Html.ActionLink("Répondre", "Details", "Question", new { id = q.id }, new { @class = "btn btn-success btn-xs" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
