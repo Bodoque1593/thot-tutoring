@@ -2,83 +2,53 @@
 @using System.Reflection
 @{
     ViewBag.Title = "Questions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // Helper: obtiene el valor de la PK aunque no se llame "Id"
     Func<object, object> getKey = (obj) =>
     {
         if (obj == null) return null;
         var t = obj.GetType();
-        var p = t.GetProperty("Id")
-             ?? t.GetProperty("ID")
-             ?? t.GetProperty("QuestionId")
-             ?? t.GetProperty("IdQuestion");
+        var p = t.GetProperty("Id") ?? t.GetProperty("ID") ?? t.GetProperty("QuestionId") ?? t.GetProperty("IdQuestion") ?? t.GetProperty("id");
         return p != null ? p.GetValue(obj, null) : null;
     };
 }
-
 <h2>Questions</h2>
 
 @if (TempData["ok"] != null)
-{
-    <div class="alert alert-success">@TempData["ok"]</div>
-}
+{<div class="alert alert-success">@TempData["ok"]</div>}
 @if (TempData["err"] != null)
-{
-    <div class="alert alert-danger">@TempData["err"]</div>
-}
+{<div class="alert alert-danger">@TempData["err"]</div>}
 
 <table class="table table-striped">
     <thead>
-        <tr>
-            <th>Cours</th>
-            <th>Ressource</th>
-            <th>État</th>
-            <th>Contenu</th>
-            <th style="width:120px;">Actions</th>
-        </tr>
+        <tr><th>Cours</th><th>Ressource</th><th>État</th><th>Contenu</th><th style="width:120px">Actions</th></tr>
     </thead>
     <tbody>
         @if (Model != null && Model.Any())
         {
             foreach (var q in Model)
             {
-                var coursNom = (q.Ressource != null && q.Ressource.ModuleCours != null && q.Ressource.ModuleCours.Cours != null)
-                    ? (q.Ressource.ModuleCours.Cours.Nom ?? "--")
-                    : "--";
-
-                var resTitre = (q.Ressource != null ? (q.Ressource.Titre ?? "--") : "--");
-
-                var key = getKey(q);  // <<--- aquí recuperamos la PK real
+                var coursNom = q.Ressource?.ModuleCours?.Cours?.Nom ?? q.Cours?.Nom ?? "--";
+                var resTitre = q.Ressource?.Titre ?? "--";
+                var key = getKey(q);
 
                 <tr>
                     <td>@coursNom</td>
                     <td>@resTitre</td>
                     <td>
                         @if (q.EstResolvee)
-                        {
-                            <span class="label label-success">Résolue</span>
-                        }
+                        {<span class="label label-success">Résolue</span> }
                         else
-                        {
-                            <span class="label label-warning">Ouverte</span>
-                        }
+                        { <span class="label label-warning">Ouverte</span>}
                     </td>
                     <td>@(q.Contenu ?? "")</td>
                     <td>
                         @if (key != null)
                         {
-                            @Html.ActionLink(
-                                "Voir",
-                                "Details",
-                                "Question",
-                                new { id = key },                   // <- sin q.Id
-                                new { @class = "btn btn-primary btn-sm" }
-                            )
+                            @Html.ActionLink("Voir", "Details", "Question", new { id = key }, new { @class = "btn btn-primary btn-sm" })
                         }
                         else
-                        {
-                            <span class="text-muted">Id inconnu</span>
-                        }
+                        { <span class="text-muted">Id inconnu</span>}
                     </td>
                 </tr>
             }

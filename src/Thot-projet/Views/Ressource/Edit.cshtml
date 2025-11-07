@@ -1,6 +1,10 @@
 ﻿@model Thot_projet.Models.Ressource
-@{ ViewBag.Title = "Modifier la ressource"; }
+@{
+    ViewBag.Title = "Modifier la ressource";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 <h2>Modifier la ressource</h2>
+
 @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
@@ -33,15 +37,13 @@
             @Html.Label("URL actuelle", new { @class = "control-label col-md-2" })
             <div class="col-md-8">
                 <p class="form-control-static">
-                    @* Dentro del @using: if SIN @ *@
                     @{
                         var hasUrl = !string.IsNullOrWhiteSpace(Model.url);
                     }
-                    if (hasUrl) {
-                    <a href="@Model.url" target="_blank">@Model.url</a>
-                    } else {
-                    <em>Aucune</em>
-                    }
+                    @if (hasUrl)
+                    {<a href="@Model.url" target="_blank">@Model.url</a> }
+                else
+                { <em>Aucune</em>}
                 </p>
                 @Html.TextBoxFor(m => m.url, new { @class = "form-control", maxlength = "255", type = "url", placeholder = "Remplacer par une autre URL (laisser vide si vous téléversez un PDF)" })
             </div>

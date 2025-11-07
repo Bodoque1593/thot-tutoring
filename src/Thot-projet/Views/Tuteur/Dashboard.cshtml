@@ -1,8 +1,8 @@
 ﻿@model Thot_projet.Models.TuteurDashboardVM
 @{
     ViewBag.Title = "Tableau de bord";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <h2>Tableau de bord</h2>
 
 <div class="row">
@@ -11,25 +11,19 @@
             <div class="panel-heading"><strong>Questions ouvertes</strong></div>
             <table class="table table-striped">
                 <thead>
-                    <tr>
-                        <th>Cours</th>
-                        <th>Contenu</th>
-                        <th>Créée</th>
-                        <th></th>
-                    </tr>
+                    <tr><th>Cours</th><th>Contenu</th><th>Créée</th><th></th></tr>
                 </thead>
                 <tbody>
-                    @if (Model.QuestionsOuvertes != null && Model.QuestionsOuvertes.Any())
+                    @if (Model?.QuestionsOuvertes != null && Model.QuestionsOuvertes.Any())
                     {
                         foreach (var q in Model.QuestionsOuvertes)
                         {
                             <tr>
                                 <td>@(q.Cours != null ? q.Cours.Nom : "-")</td>
                                 <td>@q.Contenu</td>
-                                <td>@q.Creele</td>
+                                <td>@q.Creele.ToString("yyyy-MM-dd HH:mm")</td>
                                 <td>
-                                    <a class="btn btn-xs btn-success"
-                                       href="@Url.Action("Details", "Question", new { id = q.id })">Répondre</a>
+                                    <a class="btn btn-xs btn-success" href="@Url.Action("Details","Question", new { id = q.id })">Répondre</a>
                                 </td>
                             </tr>
                         }
@@ -47,12 +41,12 @@
         <div class="panel panel-default">
             <div class="panel-heading"><strong>Mes sessions de clavardage</strong></div>
             <div class="panel-body">
-                @if (Model.MesChats != null && Model.MesChats.Any())
+                @if (Model?.MesChats != null && Model.MesChats.Any())
                 {
                     <ul class="list-unstyled">
                         @foreach (var s in Model.MesChats)
                         {
-                            <li>Session #@s.id · @s.DemarreLe</li>
+                            <li>Session #@s.id · @s.DemarreLe.ToString("yyyy-MM-dd HH:mm")</li>
                         }
                     </ul>
                 }

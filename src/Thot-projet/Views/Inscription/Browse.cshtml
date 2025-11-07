@@ -1,10 +1,27 @@
 ﻿@model IEnumerable<Thot_projet.Models.InscriptionBrowseVM>
 @{
     ViewBag.Title = "S'inscrire à un cours";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
 
-<h2>S'inscrire à un cours</h2>
-<p class="text-muted">Cliquez sur “S’inscrire” pour un cours auquel vous n’êtes pas encore inscrit.</p>
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>S'inscrire à un cours</h2>
+    <hr class="soft-hr" />
+    <p class="text-muted">Cliquez sur “S’inscrire” pour un cours auquel vous n’êtes pas encore inscrit.</p>
+</div>
 
 <div class="row">
     @foreach (var item in Model)
@@ -17,9 +34,7 @@
                     <h4 class="text-primary" title="@item.Nom">@item.Nom</h4>
                     <p class="text-muted">Niveau: <strong>@item.Niveau</strong></p>
                     @if (!string.IsNullOrWhiteSpace(item.Description))
-                    {
-                        <p>@item.Description</p>
-                    }
+                    {<p>@item.Description</p>}
                     <p><span class="label label-info" style="font-size:12px;">@item.Prix.ToString("0.00") $</span></p>
 
                     @if (item.DejaInscrit)

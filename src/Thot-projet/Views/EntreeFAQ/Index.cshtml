@@ -4,14 +4,37 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var isTuteur = string.Equals(Convert.ToString(Session["UserRole"] ?? ""), "Tuteur", StringComparison.OrdinalIgnoreCase);
 }
-<h2>Foire aux questions</h2>
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+
+    .panel-title a {
+        display: inline-block;
+        width: 100%;
+        text-decoration: none;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Foire aux questions</h2>
+    <hr class="soft-hr" />
+</div>
 
 @if (isTuteur)
 {
     <p>@Html.ActionLink("Ajouter une entrée", "Create", null, new { @class = "btn btn-success" })</p>
 }
 
-@if (!Model.Any())
+@if (Model == null || !Model.Any())
 {
     <p><em>Aucune entrée pour le moment.</em></p>
 }
@@ -20,10 +43,11 @@ else
     <div class="panel-group" id="faq">
         @foreach (var f in Model.OrderByDescending(x => x.PublieLe))
         {
+            var anchorId = "f" + Convert.ToString(f.id);
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#faq" href="#f@f.id">
+                        <a data-toggle="collapse" data-parent="#faq" href="#@anchorId">
                             @f.QuestionTexte
                             <span class="label label-default" style="margin-left:6px;">
                                 @f.PublieLe.ToString("yyyy-MM-dd")
@@ -31,7 +55,7 @@ else
                         </a>
                     </h4>
                 </div>
-                <div id="f@f.id" class="panel-collapse collapse">
+                <div id="@anchorId" class="panel-collapse collapse">
                     <div class="panel-body">
                         @Html.Raw((f.ReponseTexte ?? "").Replace("\n", "<br/>"))
                         @if (isTuteur)

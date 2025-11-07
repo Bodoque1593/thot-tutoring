@@ -1,19 +1,32 @@
 ﻿@model IEnumerable<Thot_projet.Models.Paiement>
 @using System.Globalization
-
 @{
     ViewBag.Title = "Mes paiements";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var fr = CultureInfo.GetCultureInfo("fr-CA");
 }
+<style>
+    .page-head {
+        margin-bottom: 16px
+    }
 
-<h2>Mes paiements</h2>
-<hr />
+        .page-head h2 {
+            margin: 0 0 6px
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px
+    }
+</style>
+
+<div class="page-head">
+    <h2>Mes paiements</h2>
+    <hr class="soft-hr" />
+</div>
 
 @if (TempData["ok"] != null)
 {
-    <div class="alert alert-success">
-        <span class="glyphicon glyphicon-ok-sign"></span> @TempData["ok"]
-    </div>
+    <div class="alert alert-success"><span class="glyphicon glyphicon-ok-sign"></span> @TempData["ok"]</div>
 }
 
 @if (Model == null || !Model.Any())
@@ -40,22 +53,15 @@ else
                     <td>@p.Monnaie</td>
                     <td>
                         @if (string.Equals(p.Statut, "Payé", System.StringComparison.OrdinalIgnoreCase))
-                        {
-                            <span class="label label-success">Payé</span>
-                        }
+                        {<span class="label label-success">Payé</span> }
                         else if (string.Equals(p.Statut, "En attente", System.StringComparison.OrdinalIgnoreCase))
-                        {
-                            <span class="label label-warning">En attente</span>
-                        }
+                        { <span class="label label-warning">En attente</span> }
                         else
-                        {
-                            <span class="label label-default">@p.Statut</span>
-                        }
+                        { <span class="label label-default">@p.Statut</span>}
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 }
-
-@Html.ActionLink("Retour", "Index", "Inscription", null, new { @class = "btn btn-default" })
+<p>@Html.ActionLink("Retour", "Index", "Inscription", null, new { @class = "btn btn-default" })</p>

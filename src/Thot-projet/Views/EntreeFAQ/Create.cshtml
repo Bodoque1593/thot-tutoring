@@ -2,8 +2,24 @@
     ViewBag.Title = "Créer une entrée FAQ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
 
-<h2>Créer une entrée FAQ</h2>
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Créer une entrée FAQ</h2>
+    <hr class="soft-hr" />
+</div>
 
 @using (Html.BeginForm("Create", "EntreeFAQ", FormMethod.Post))
 {
@@ -35,4 +51,4 @@
     </div>
 }
 
-@* Intencionadamente NO uso @section Scripts para evitar CS0103 (Scripts.Render) *@
+

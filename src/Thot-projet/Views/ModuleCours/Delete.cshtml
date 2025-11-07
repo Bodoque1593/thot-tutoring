@@ -3,7 +3,25 @@
     ViewBag.Title = "Supprimer le module";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Supprimer le module</h2>
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Supprimer le module</h2>
+    <hr class="soft-hr" />
+</div>
+
 <p>Êtes-vous sûr de vouloir supprimer ce module ?</p>
 
 <dl class="dl-horizontal">
@@ -20,5 +38,5 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.id)
     <input type="submit" value="Supprimer" class="btn btn-danger" />
-    @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
 }

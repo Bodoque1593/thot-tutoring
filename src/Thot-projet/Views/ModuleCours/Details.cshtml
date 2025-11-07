@@ -3,7 +3,25 @@
     ViewBag.Title = "Détails du module";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Détails du module</h2>
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Détails du module</h2>
+    <hr class="soft-hr" />
+</div>
+
 <dl class="dl-horizontal">
     <dt>Cours</dt>
     <dd>@(Model.Cours != null ? Model.Cours.Nom : "")</dd>
@@ -14,5 +32,5 @@
 </dl>
 <p>
     @Html.ActionLink("Éditer", "Edit", new { id = Model.id }, new { @class = "btn btn-primary" })
-    @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
 </p>

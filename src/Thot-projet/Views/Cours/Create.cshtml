@@ -3,7 +3,24 @@
     ViewBag.Title = "Créer un cours";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Créer un cours</h2>
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Créer un cours</h2>
+    <hr class="soft-hr" />
+</div>
 
 @using (Html.BeginForm())
 {

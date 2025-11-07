@@ -3,7 +3,24 @@
     ViewBag.Title = "Créer une inscription";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Créer une inscription</h2>
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Créer une inscription</h2>
+    <hr class="soft-hr" />
+</div>
 
 @using (Html.BeginForm())
 {
@@ -23,11 +40,10 @@
     </div>
 
     <input type="submit" value="Enregistrer" class="btn btn-success" />
-    @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
 }
 
-@section Scripts {
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
-}
+<!-- Validaciones sin bundles -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>

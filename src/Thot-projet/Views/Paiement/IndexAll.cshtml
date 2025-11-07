@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Thot_projet.Models.Paiement>
+@{
+    ViewBag.Title = "Paiements (tous)";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Paiements (tous)</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">Aucun paiement enregistré.</div>
+}
+else
+{
+    <table class="table table-bordered table-condensed">
+        <thead>
+            <tr><th>UtilisateurId</th><th>Montant</th><th>Monnaie</th><th>Statut</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.UtilisateurId</td>
+                    <td>@p.Montant.ToString("C")</td>
+                    <td>@p.Monnaie</td>
+                    <td>@p.Statut</td>
+                    <td>@p.PayeLe.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

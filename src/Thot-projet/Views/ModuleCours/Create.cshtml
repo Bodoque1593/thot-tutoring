@@ -1,20 +1,37 @@
 ﻿@model Thot_projet.Models.ModuleCours
 @{
     ViewBag.Title = "Créer un module";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var uiHelp = (bool?)ViewBag.UiHelp == true;
 }
-<h2>Créer un module</h2>
-<hr />
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Créer un module</h2>
+    <hr class="soft-hr" />
+</div>
+
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
     <div class="form-horizontal">
-
         <div class="alert alert-info" style="display:@(uiHelp ? "block" : "none")">
             Conseil: créez le module avec <strong>Cours</strong>, <strong>Numéro</strong> et <strong>Titre</strong>.
-            Ensuite, vous serez redirigé pour <em>ajouter la première ressource</em> (PDF, lien, vidéo, etc.).
+            Ensuite, vous serez redirigé pour <em>ajouter la première ressource</em>.
         </div>
 
         <div class="form-group">
@@ -50,7 +67,7 @@
     </div>
 }
 
-<!-- Cargar validaciones sin bundles para evitar que se vea texto literal -->
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>

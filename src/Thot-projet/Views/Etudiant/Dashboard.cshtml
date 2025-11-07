@@ -1,9 +1,26 @@
 ﻿@model Thot_projet.Models.EtudiantDashboardVM
 @{
     ViewBag.Title = "Tableau de bord";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
 
-<h2>Tableau de bord</h2>
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Tableau de bord</h2>
+    <hr class="soft-hr" />
+</div>
 
 <div class="row">
     <div class="col-md-7">

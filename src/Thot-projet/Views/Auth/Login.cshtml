@@ -3,8 +3,24 @@
     ViewBag.Title = "Connexion";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
 
-<h2>Connexion</h2>
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Connexion</h2>
+    <hr class="soft-hr" />
+</div>
 
 @using (Html.BeginForm("Login", "Auth", FormMethod.Post, new { @class = "form", role = "form" }))
 {
@@ -21,8 +37,7 @@
         @Html.LabelFor(m => m.Motdepasse)
         @Html.PasswordFor(m => m.Motdepasse, new { @class = "form-control", id = "pwd", placeholder = "Mot de passe" })
         @Html.ValidationMessageFor(m => m.Motdepasse, "", new { @class = "text-danger" })
-
-        <div class="btn-group" style="margin-top:8px;">
+        <div style="margin-top:8px;">
             <button type="button" id="btnToggle" class="btn btn-default">Afficher/Masquer</button>
         </div>
     </div>
@@ -56,12 +71,14 @@
     <script>
         (function () {
             var pwd = document.getElementById("pwd");
-            document.getElementById("btnToggle").addEventListener("click", function () {
-                pwd.type = (pwd.type === "password" ? "text" : "password");
-            });
+            var btn = document.getElementById("btnToggle");
+            if (pwd && btn) {
+                btn.addEventListener("click", function () {
+                    pwd.type = (pwd.type === "password" ? "text" : "password");
+                });
+            }
         })();
     </script>
-
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>

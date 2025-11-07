@@ -1,12 +1,26 @@
 ﻿@model IEnumerable<Thot_projet.Models.Inscription>
-@using System.Globalization
-
 @{
     ViewBag.Title = "Mes cours";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
 
-<h2>Mes cours</h2>
-<hr />
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Mes cours</h2>
+    <hr class="soft-hr" />
+</div>
 
 @if (TempData["ok"] != null)
 {
@@ -39,25 +53,19 @@ else
         <tbody>
             @foreach (var i in Model)
             {
-                var c = i.Cours; // puede llegar null si el cours fue supprimé
+                var c = i.Cours;
                 <tr>
                     <td>
                         @if (c != null)
-                        {
-                            @Html.ActionLink(c.Nom, "Details", "Cours", new { id = c.id }, null)
-                        }
-                        else
-                        {
-                            <em>(cours supprimé)</em>
-                        }
+                        {@Html.ActionLink(c.Nom, "Details", "Cours", new { id = c.id }, null) }
+                    else
+                    { <em>(cours supprimé)</em>}
                     </td>
                     <td>@(c?.Niveau ?? "-")</td>
                     <td>@i.InscritLe.ToString("yyyy-MM-dd")</td>
                     <td>
                         @if (c != null)
-                        {
-                            @Html.ActionLink("Voir", "Details", "Cours", new { id = c.id }, new { @class = "btn btn-default btn-xs" })
-                        }
+                        {@Html.ActionLink("Voir", "Details", "Cours", new { id = c.id }, new { @class = "btn btn-default btn-xs" })}
                         @Html.ActionLink("Questions", "Index", "Question", null, new { @class = "btn btn-primary btn-xs", style = "margin-left:6px" })
                     </td>
                 </tr>

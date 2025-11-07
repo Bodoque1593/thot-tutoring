@@ -1,9 +1,28 @@
 ﻿@model Thot_projet.Models.Cours
 @{
     ViewBag.Title = "Supprimer cours";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Supprimer</h2>
-<h4>Voulez-Vous effacer ce cours-la?</h4>
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Supprimer</h2>
+    <hr class="soft-hr" />
+</div>
+
+<h4>Voulez-vous effacer ce cours-là&nbsp;?</h4>
 
 <dl class="dl-horizontal">
     <dt>Nom</dt>
@@ -12,10 +31,10 @@
     <dd>@Model.Niveau</dd>
 </dl>
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.id)
     <input type="submit" value="Effacer" class="btn btn-danger" />
-    @Html.ActionLink("Canceler", "Index", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
 }

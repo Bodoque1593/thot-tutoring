@@ -3,7 +3,28 @@
     ViewBag.Title = "Créer un compte";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Créer un compte</h2>
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+
+    .help-block {
+        color: #777;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Créer un compte</h2>
+    <hr class="soft-hr" />
+</div>
 
 @using (Html.BeginForm("Register", "Auth", FormMethod.Post, new { @class = "form", role = "form" }))
 {
@@ -38,7 +59,7 @@
         @Html.PasswordFor(m => m.Motdepasse, new { @class = "form-control", id = "pwd", placeholder = "Mot de passe" })
         @Html.ValidationMessageFor(m => m.Motdepasse, "", new { @class = "text-danger" })
 
-        <div class="btn-group" style="margin-top:8px;">
+        <div style="margin-top:8px;">
             <button type="button" id="btnGenLocal" class="btn btn-default">Générer un mot de passe</button>
             <button type="button" id="btnToggle" class="btn btn-default">Afficher/Masquer</button>
         </div>
@@ -57,28 +78,35 @@
 
 @section Scripts {
     <script>
- (function () {
-   function genLocal(len) {
-     var chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!#$%*-_";
-     var out = "";
-     for (var i = 0; i < len; i++) out += chars.charAt(Math.floor(Math.random() * chars.length));
-     return out;
-   }
-   var pwd = document.getElementById("pwd");
-   var pwd2 = document.getElementById("pwd2");
+        (function () {
+            function genLocal(len) {
+                var chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!#$%*-_";
+                var out = "";
+                for (var i = 0; i < len; i++) out += chars.charAt(Math.floor(Math.random() * chars.length));
+                return out;
+            }
 
-   document.getElementById("btnGenLocal").addEventListener("click", function () {
-     pwd.value = genLocal(12);
-     pwd.type = "text"; // para que el usuario lo vea
-     pwd2.value = "";
-     pwd.focus();
-     pwd.select();
-   });
+            var pwd = document.getElementById("pwd");
+            var pwd2 = document.getElementById("pwd2");
+            var gen = document.getElementById("btnGenLocal");
+            var tog = document.getElementById("btnToggle");
 
-   document.getElementById("btnToggle").addEventListener("click", function () {
-     pwd.type = (pwd.type === "password" ? "text" : "password");
-   });
- })();
+            if (gen && pwd) {
+                gen.addEventListener("click", function () {
+                    pwd.value = genLocal(12);
+                    pwd.type = "text";
+                    if (pwd2) pwd2.value = "";
+                    pwd.focus();
+                    pwd.select();
+                });
+            }
+
+            if (tog && pwd) {
+                tog.addEventListener("click", function () {
+                    pwd.type = (pwd.type === "password" ? "text" : "password");
+                });
+            }
+        })();
     </script>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

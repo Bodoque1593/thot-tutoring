@@ -5,7 +5,24 @@
     var role = Convert.ToString(Session["UserRole"] ?? "");
     var isTuteur = string.Equals(role, "Tuteur", StringComparison.OrdinalIgnoreCase);
 }
-<h2>Liste des cours</h2>
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Liste des cours</h2>
+    <hr class="soft-hr" />
+</div>
 
 @if (isTuteur)
 {
@@ -13,7 +30,9 @@
 }
 
 <table class="table table-striped table-bordered">
-    <thead><tr><th>Nom</th><th>Niveau</th><th>Actions</th></tr></thead>
+    <thead>
+        <tr><th>Nom</th><th>Niveau</th><th>Actions</th></tr>
+    </thead>
     <tbody>
         @foreach (var c in Model)
         {

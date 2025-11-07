@@ -1,10 +1,12 @@
 ﻿@{
     ViewBag.Title = "Répondre";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var q = ViewBag.Question as Thot_projet.Models.Question;
 }
 <h2>Répondre</h2>
+
 <div class="panel panel-default">
-    <div class="panel-heading"><strong>Question #@q.id</strong> — @q.Cours?.Nom</div>
+    <div class="panel-heading"><strong>Question #@q.id</strong> — @(q.Cours != null ? q.Cours.Nom : (q.Ressource?.ModuleCours?.Cours?.Nom ?? "-"))</div>
     <div class="panel-body">
         <p>@q.Contenu</p>
         <hr />

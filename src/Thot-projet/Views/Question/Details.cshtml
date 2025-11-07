@@ -1,57 +1,36 @@
 ﻿@model Thot_projet.Models.Question
+@using System.Linq
 @{
     ViewBag.Title = "Détails de la question";
 
-    var coursNom = (Model != null && Model.Ressource != null &&
-                    Model.Ressource.ModuleCours != null &&
-                    Model.Ressource.ModuleCours.Cours != null)
-                   ? (Model.Ressource.ModuleCours.Cours.Nom ?? "--")
-                   : "--";
-
-    var resTitre = (Model != null && Model.Ressource != null)
-                   ? (Model.Ressource.Titre ?? "Ressource")
-                   : "Ressource";
-
-    var routeId = ViewContext.RouteData.Values["id"] != null
-        ? ViewContext.RouteData.Values["id"].ToString()
-        : "";
+    var coursNom = (Model?.Ressource?.ModuleCours?.Cours?.Nom) ?? (Model?.Cours?.Nom) ?? "--";
+    var resTitre = (Model?.Ressource?.Titre) ?? "Ressource";
+    var routeId = ViewContext.RouteData.Values["id"]?.ToString() ?? "";
 }
-
 <h2>Détails de la question</h2>
 
 @if (TempData["ok"] != null)
-{
-    <div class="alert alert-success">@TempData["ok"]</div>
-}
+{<div class="alert alert-success">@TempData["ok"]</div>}
 @if (TempData["err"] != null)
-{
-    <div class="alert alert-danger">@TempData["err"]</div>
-}
+{<div class="alert alert-danger">@TempData["err"]</div>}
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <strong>@coursNom</strong> · Ressource : @resTitre
-        @if (Model != null && Model.EstResolvee)
-        {
-            <span class="label label-success" style="margin-left:8px;">Résolue</span>
-        }
+        @if (Model?.EstResolvee == true)
+        {<span class="label label-success" style="margin-left:8px;">Résolue</span> }
         else
-        {
-            <span class="label label-warning" style="margin-left:8px;">Ouverte</span>
-        }
+        { <span class="label label-warning" style="margin-left:8px;">Ouverte</span>}
     </div>
     <div class="panel-body">
-        <p>@(Model != null ? Model.Contenu : "")</p>
+        <p>@(Model?.Contenu ?? "")</p>
     </div>
 </div>
 
 <h3>Réponses</h3>
 @{
-    var reps = (Model != null && Model.Reponses != null)
-        ? Model.Reponses
-        : Enumerable.Empty<Thot_projet.Models.Reponse>();
+    var reps = Model?.Reponses ?? Enumerable.Empty<Thot_projet.Models.Reponse>();
 }
-
 @if (!reps.Any())
 {
     <p>Aucune réponse pour l'instant.</p>
@@ -61,9 +40,7 @@ else
     <ul class="list-group">
         @foreach (var r in reps)
         {
-            <li class="list-group-item">
-                <div>@r.Contenu</div>
-            </li>
+            <li class="list-group-item"><div>@r.Contenu</div></li>
         }
     </ul>
 }
@@ -81,6 +58,6 @@ else
         </div>
 
         <button type="submit" class="btn btn-success">Répondre</button>
-        @Html.ActionLink("Retour", "Index", "Question", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+        @Html.ActionLink("Retour", "Index", "Question", null, new { @class = "btn btn-default", style = "margin-left:8px" })
     }
 }

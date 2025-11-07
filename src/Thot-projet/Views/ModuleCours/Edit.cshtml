@@ -1,7 +1,27 @@
 ﻿@model Thot_projet.Models.ModuleCours
-@{ ViewBag.Title = "Modifier le module"; }
-<h2>Modifier le module</h2>
-<hr />
+@{
+    ViewBag.Title = "Modifier le module";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Modifier le module</h2>
+    <hr class="soft-hr" />
+</div>
+
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -39,4 +59,8 @@
         </div>
     </div>
 }
-@section Scripts { @@Scripts.Render("~/bundles/jqueryval") }
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>

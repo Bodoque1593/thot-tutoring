@@ -1,6 +1,7 @@
 ﻿@model Thot_projet.Models.Ressource
 @{
     ViewBag.Title = "Créer une ressource";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var uiHelp = (bool?)ViewBag.UiHelp == true;
     var uploadErr = Convert.ToString(ViewBag.UploadError ?? "");
 }
@@ -11,16 +12,14 @@
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    @* OJO: dentro del @using, las estructuras de control NO llevan @ *@
     if (!string.IsNullOrWhiteSpace(uploadErr))
     {
         <div class="alert alert-danger">@uploadErr</div>
     }
 
     <div class="form-horizontal">
-
         <div class="alert alert-info" style="display:@(uiHelp ? "block" : "none")">
-            Option A: indiquez une <strong>URL</strong> (YouTube, site, etc.).
+            Option A: indiquez une <strong>URL</strong> (YouTube, site, etc.).<br />
             Option B: téléversez un <strong>PDF</strong> (Max 10MB). S’il y a un PDF, il remplace l’URL.
         </div>
 
@@ -58,7 +57,7 @@
             <div class="col-md-8">
                 <input type="file" name="fichier" id="fichier" accept="application/pdf,.pdf" class="form-control" />
                 <small id="fileInfo" class="text-muted"></small>
-                <span class="help-block">Option B : Téléversez un PDF (Max 10MB). Si vous ajoutez un PDF, il remplace la valeur URL.</span>
+                <span class="help-block">Option B : Téléversez un PDF (Max 10MB). Si vous ajoutez un PDF, il remplace l’URL.</span>
             </div>
         </div>
 
@@ -76,7 +75,6 @@
     </div>
 }
 
-<!-- Scripts (sin bundles) -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
@@ -92,14 +90,11 @@
                 var file = f.files[0];
                 var mb = (file.size / 1048576).toFixed(2);
                 info.textContent = 'Sélectionné: ' + file.name + ' (' + mb + ' MB)';
-                if (!/\.pdf$/i.test(file.name)) {
-                    info.textContent += ' — ERREUR: seulement PDF';
-                }
+                if (!/\.pdf$/i.test(file.name)) { info.textContent += ' — ERREUR: seulement PDF'; }
             });
         }
         document.getElementById('resForm').addEventListener('submit', function () {
-            spn.style.display = 'inline-block';
-            btn.disabled = true;
+            spn.style.display = 'inline-block'; btn.disabled = true;
             setTimeout(function () { btn.disabled = false; spn.style.display = 'none'; }, 12000);
         });
     })();

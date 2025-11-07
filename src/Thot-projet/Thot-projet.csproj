@@ -188,7 +188,6 @@
     <Content Include="Views\Ressource\Create.cshtml" />
     <Content Include="Views\Ressource\Edit.cshtml" />
     <Content Include="Views\Ressource\Details.cshtml" />
-    <Content Include="Views\Ressource\View.cshtml" />
     <Content Include="Views\Inscription\Index.cshtml" />
     <Content Include="Views\Inscription\Create.cshtml" />
     <Content Include="Views\Inscription\Details.cshtml" />
@@ -198,8 +197,6 @@
     <Content Include="Views\Tuteur\Dashboard.cshtml" />
     <Content Include="Views\Etudiant\Dashboard.cshtml" />
     <Content Include="Views\Inscription\Browse.cshtml" />
-    <Content Include="Views\Question\Index_Etudiant.cshtml" />
-    <Content Include="Views\Question\Index_Tuteur.cshtml" />
     <Content Include="Views\Question\Create.cshtml" />
     <Content Include="Views\Question\Details.cshtml" />
     <Content Include="Views\Paiement\Index_Etudiant.cshtml" />
@@ -212,6 +209,7 @@
     <Content Include="Views\Cours\Vitrine.cshtml" />
     <Content Include="Views\Paiement\Index.cshtml" />
     <Content Include="Views\EntreeFAQ\Create.cshtml" />
+    <Content Include="Views\Paiement\IndexAll.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

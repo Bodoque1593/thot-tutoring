@@ -3,13 +3,10 @@
     ViewBag.Title = "Ressources";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <h2>Ressources</h2>
 
 @if (TempData["ok"] != null)
-{
-    <div class="alert alert-success">@TempData["ok"]</div> <!-- Message de succès -->
-}
+{<div class="alert alert-success">@TempData["ok"]</div>}
 
 <p>@Html.ActionLink("Créer une ressource", "Create", null, new { @class = "btn btn-primary" })</p>
 
@@ -28,15 +25,13 @@
         @foreach (var r in Model)
         {
             <tr>
-                <td>@(r.ModuleCours?.Cours != null ? r.ModuleCours.Cours.Nom : "")</td> <!-- Nom du cours -->
-                <td>@(r.ModuleCours != null ? r.ModuleCours.Numero.ToString() : "")</td>  <!-- Numéro du module -->
+                <td>@(r.ModuleCours?.Cours != null ? r.ModuleCours.Cours.Nom : "")</td>
+                <td>@(r.ModuleCours != null ? r.ModuleCours.Numero.ToString() : "")</td>
                 <td>@Html.DisplayFor(_ => r.Type)</td>
                 <td>@Html.DisplayFor(_ => r.Titre)</td>
                 <td>
                     @if (!string.IsNullOrWhiteSpace(r.url))
-                    {
-                        <a href="@r.url" target="_blank">Ouvrir</a> <!-- Lien vers la ressource -->
-                    }
+                    {<a href="@r.url" target="_blank">Ouvrir</a>}
                 </td>
                 <td>
                     @Html.ActionLink("Détails", "Details", new { id = r.id }) |

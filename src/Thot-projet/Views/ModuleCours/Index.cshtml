@@ -3,12 +3,28 @@
     ViewBag.Title = "Modules du cours";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
 
-<h2>Modules du cours</h2>
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Modules du cours</h2>
+    <hr class="soft-hr" />
+</div>
 
 @if (TempData["ok"] != null)
 {
-    <div class="alert alert-success">@TempData["ok"]</div> 
+    <div class="alert alert-success">@TempData["ok"]</div>
 }
 
 <p>@Html.ActionLink("Créer un module", "Create", null, new { @class = "btn btn-primary" })</p>
@@ -38,4 +54,3 @@
         }
     </tbody>
 </table>
-

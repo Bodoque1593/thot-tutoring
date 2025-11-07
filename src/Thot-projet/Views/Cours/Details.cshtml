@@ -1,16 +1,31 @@
 ﻿@model Thot_projet.Models.Cours
 @using System.Globalization
-
 @{
     ViewBag.Title = "Cours";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var fr = CultureInfo.GetCultureInfo("fr-CA");
     var img = string.IsNullOrWhiteSpace(Model.ImageUrl)
         ? "https://via.placeholder.com/800x300?text=Cours"
         : Model.ImageUrl;
 }
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
 
-<h2>Cours</h2>
-<hr />
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Cours</h2>
+    <hr class="soft-hr" />
+</div>
 
 <div class="row">
     <div class="col-md-7">
@@ -29,18 +44,18 @@
         </dl>
 
         <p>
-            @Html.ActionLink("Retourner a la liste", "Index", null, new { @class = "btn btn-default" })
-            @Html.ActionLink("Editer", "Edit", new { id = Model.id }, new { @class = "btn btn-primary", style = "margin-left:8px" })
+            @Html.ActionLink("Retourner à la liste", "Index", null, new { @class = "btn btn-default" })
+            @Html.ActionLink("Éditer", "Edit", new { id = Model.id }, new { @class = "btn btn-primary", style = "margin-left:8px;" })
         </p>
     </div>
     <div class="col-md-5">
-        <img src="@img" class="img-responsive img-thumbnail" />
+        <img src="@img" class="img-responsive img-thumbnail" alt="Image cours" />
     </div>
 </div>
 
-<hr />
 @if (Model.Modules != null && Model.Modules.Any())
 {
+    <hr />
     <h4>Modules</h4>
     <ul class="list-group">
         @foreach (var m in Model.Modules.OrderBy(x => x.Numero))
