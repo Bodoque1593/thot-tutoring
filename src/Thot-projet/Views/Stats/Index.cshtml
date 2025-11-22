@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Statistiques Thot";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-head">
+    <h2>Statistiques globales</h2>
+    <hr class="soft-hr" />
+</div>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-info">
+                <div class="panel-heading">Cours</div>
+                <div class="panel-body text-center">
+                    <strong>@(ViewBag.TotalCours ?? 0)</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="panel panel-info">
+                <div class="panel-heading">Utilisateurs</div>
+                <div class="panel-body text-center">
+                    <strong>@(ViewBag.TotalUtilisateurs ?? 0)</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="panel panel-info">
+                <div class="panel-heading">Questions totales</div>
+                <div class="panel-body text-center">
+                    <strong>@(ViewBag.TotalQuestions ?? 0)</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="panel panel-danger">
+                <div class="panel-heading">Questions ouvertes</div>
+                <div class="panel-body text-center">
+                    <strong>@(ViewBag.QuestionsOuvertes ?? 0)</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+        <div class="col-md-3">
+            <div class="panel panel-success">
+                <div class="panel-heading">Entrées FAQ</div>
+                <div class="panel-body text-center">
+                    <strong>@(ViewBag.TotalFaq ?? 0)</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Top cours (par inscriptions)</h3>
+
+    @{
+        var topCours = ViewBag.TopCours as List<System.Collections.Generic.KeyValuePair<string, int>>;
+    }
+
+    @if (topCours == null || topCours.Count == 0)
+    {
+        <p><em>Aucun cours avec des inscriptions.</em></p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Cours</th>
+                    <th>Nombre d'inscriptions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in topCours)
+                {
+                    <tr>
+                        <td>@c.Key</td>
+                        <td>@c.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

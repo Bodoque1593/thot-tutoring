@@ -72,11 +72,9 @@
                             <li>@Html.ActionLink("Questions", "Index_Etudiant", "Question")</li>
                             <li>@Html.ActionLink("FAQ", "Index", "EntreeFAQ")</li>
                             <li>@Html.ActionLink("Demander rencontre", "DemandeRencontre", "Question")</li>
-
                         }
                         else if (isTut)
                         {
-
                             <!-- Lien principal du tableau de bord -->
                             <li>@Html.ActionLink("Accueil", "Dashboard", "Tuteur")</li>
 
@@ -98,6 +96,9 @@
                             <!-- Liens directs hors du menu déroulant -->
                             <li>@Html.ActionLink("FAQ", "Index", "EntreeFAQ")</li>
                             <li>@Html.ActionLink("Vitrine cours", "Vitrine", "Cours")</li>
+
+                            <!-- Nouveau lien vers les stats (microservice IA) -->
+                            <li>@Html.ActionLink("Stats", "Index", "Stats")</li>
                         }
                     </ul>
                 }
@@ -121,16 +122,22 @@
     <div class="container body-content">
         @if (TempData["ok"] != null)
         {
-            <div class="alert alert-success"><span class="glyphicon glyphicon-ok-sign"></span> @TempData["ok"]</div>
+            <div class="alert alert-success">
+                <span class="glyphicon glyphicon-ok-sign"></span> @TempData["ok"]
+            </div>
         }
         @if (TempData["err"] != null)
         {
-            <div class="alert alert-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> @TempData["err"]</div>
+            <div class="alert alert-danger">
+                <span class="glyphicon glyphicon-exclamation-sign"></span> @TempData["err"]
+            </div>
         }
 
         @RenderBody()
         <hr />
-        <footer class="footer"><p>&copy; @DateTime.Now.Year - Thot Projet</p></footer>
+        <footer class="footer">
+            <p>&copy; @DateTime.Now.Year - Thot Projet</p>
+        </footer>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

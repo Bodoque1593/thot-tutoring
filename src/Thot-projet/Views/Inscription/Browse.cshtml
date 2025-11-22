@@ -1,8 +1,10 @@
 ﻿@model IEnumerable<Thot_projet.Models.InscriptionBrowseVM>
+
 @{
     ViewBag.Title = "S'inscrire à un cours";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <style>
     .page-head {
         margin-bottom: 16px;
@@ -15,12 +17,21 @@
     .soft-hr {
         margin: 8px 0 16px;
     }
+
+    /* Para que el form de S’inscrire quede en línea con el botón Stripe */
+    .inline-form {
+        display: inline-block;
+        margin-right: 6px;
+    }
 </style>
 
 <div class="page-head">
     <h2>S'inscrire à un cours</h2>
     <hr class="soft-hr" />
-    <p class="text-muted">Cliquez sur “S’inscrire” pour un cours auquel vous n’êtes pas encore inscrit.</p>
+    <p class="text-muted">
+        Cliquez sur « S’inscrire » pour un cours auquel vous n’êtes pas encore inscrit.
+        Vous pouvez aussi tester le paiement avec Stripe.
+    </p>
 </div>
 
 <div class="row">
@@ -28,14 +39,26 @@
     {
         <div class="col-sm-6 col-md-4">
             <div class="thumbnail">
-                <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "https://via.placeholder.com/640x360?text=Cours" : item.ImageUrl)"
-                     alt="@item.Nom" style="max-height:180px;width:100%;object-fit:cover;" />
+                <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl)
+                                ? "https://via.placeholder.com/640x360?text=Cours"
+                                : item.ImageUrl)"
+                     alt="@item.Nom"
+                     style="max-height:180px;width:100%;object-fit:cover;" />
+
                 <div class="caption">
                     <h4 class="text-primary" title="@item.Nom">@item.Nom</h4>
                     <p class="text-muted">Niveau: <strong>@item.Niveau</strong></p>
+
                     @if (!string.IsNullOrWhiteSpace(item.Description))
-                    {<p>@item.Description</p>}
-                    <p><span class="label label-info" style="font-size:12px;">@item.Prix.ToString("0.00") $</span></p>
+                    {
+                        <p>@item.Description</p>
+                    }
+
+                    <p>
+                        <span class="label label-info" style="font-size:12px;">
+                            @item.Prix.ToString("0.00") $
+                        </span>
+                    </p>
 
                     @if (item.DejaInscrit)
                     {
@@ -43,12 +66,26 @@
                     }
                     else
                     {
-                        using (Html.BeginForm("Enroll", "Inscription", FormMethod.Post, new { @class = "form-inline" }))
-                        {
-                            @Html.AntiForgeryToken()
-                            @Html.Hidden("coursId", item.CoursId)
-                            <button type="submit" class="btn btn-primary">S’inscrire</button>
-                        }
+                        <p>
+                            @* Formulaire classique d’inscription (déjà fonctionnel) *@
+                            @using (Html.BeginForm("Enroll", "Inscription", FormMethod.Post, new { @class = "inline-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("coursId", item.CoursId)
+                                <button type="submit" class="btn btn-primary">
+                                    S’inscrire
+                                </button>
+                            }
+
+                            @* Nouveau bouton : paiement via microservice Stripe *@
+                            @Html.ActionLink(
+                                "Payer avec Stripe",
+                                "Payer",           // action
+                                "Paiement",        // controller
+                                new { id = item.CoursId },
+                                new { @class = "btn btn-success btn-sm" }
+                            )
+                        </p>
                     }
                 </div>
             </div>

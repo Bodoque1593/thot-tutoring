@@ -51,6 +51,10 @@
       <HintPath>packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
@@ -121,6 +125,7 @@
     <Compile Include="Controllers\PaiementController.cs" />
     <Compile Include="Controllers\QuestionController.cs" />
     <Compile Include="Controllers\RessourceController.cs" />
+    <Compile Include="Controllers\StatsController.cs" />
     <Compile Include="Controllers\TuteurController.cs" />
     <Compile Include="Data\AppDbContext.cs" />
     <Compile Include="Global.asax.cs">
@@ -213,6 +218,7 @@
     <Content Include="Views\Question\DemandeRencontre.cshtml" />
     <Content Include="Views\Question\Index_Etudiant.cshtml" />
     <Content Include="Views\Question\Index_Tuteur.cshtml" />
+    <Content Include="Views\Stats\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

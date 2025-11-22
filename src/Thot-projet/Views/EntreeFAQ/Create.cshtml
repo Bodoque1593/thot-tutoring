@@ -1,7 +1,10 @@
-﻿@{
+﻿@model Thot_projet.Models.EntreeFAQ
+
+@{
     ViewBag.Title = "Créer une entrée FAQ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <style>
     .page-head {
         margin-bottom: 16px;
@@ -31,24 +34,25 @@
         <div class="form-group">
             <label class="control-label col-md-2">Question</label>
             <div class="col-md-10">
-                @Html.TextBox("Question", null, new { @class = "form-control", placeholder = "Votre question..." })
+                @Html.TextBoxFor(m => m.QuestionTexte,
+                    new { @class = "form-control", placeholder = "Votre question..." })
             </div>
         </div>
 
         <div class="form-group">
             <label class="control-label col-md-2">Réponse</label>
             <div class="col-md-10">
-                @Html.TextArea("Reponse", null, new { @class = "form-control", rows = 5, placeholder = "Votre réponse..." })
+                @Html.TextAreaFor(m => m.ReponseTexte,
+                    new { @class = "form-control", rows = 5, placeholder = "Votre réponse..." })
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <button type="submit" class="btn btn-primary">Créer</button>
-                @Html.ActionLink("Annuler", "Index", "EntreeFAQ", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+                @Html.ActionLink("Annuler", "Index", "EntreeFAQ", null,
+                    new { @class = "btn btn-default", style = "margin-left:8px;" })
             </div>
         </div>
     </div>
 }
-
-
