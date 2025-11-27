@@ -8,60 +8,55 @@
         ? "https://via.placeholder.com/800x300?text=Cours"
         : Model.ImageUrl;
 }
-<style>
-    .page-head {
-        margin-bottom: 16px;
-    }
-
-        .page-head h2 {
-            margin: 0 0 6px;
-        }
-
-    .soft-hr {
-        margin: 8px 0 16px;
-    }
-</style>
 
 <div class="page-head">
     <h2>Cours</h2>
+    <small>Détails du cours</small>
     <hr class="soft-hr" />
 </div>
 
 <div class="row">
     <div class="col-md-7">
-        <dl class="dl-horizontal">
-            <dt>Nom</dt>
-            <dd>@Model.Nom</dd>
+        <div class="thot-card">
+            <dl class="dl-horizontal">
+                <dt class="thot-label">Nom</dt>
+                <dd>@Model.Nom</dd>
 
-            <dt>Niveau</dt>
-            <dd>@Model.Niveau</dd>
+                <dt class="thot-label">Niveau</dt>
+                <dd><span class="thot-badge">@Model.Niveau</span></dd>
 
-            <dt>Prix</dt>
-            <dd>@Model.Prix.ToString("C", fr) <span class="text-muted">CAD</span></dd>
+                <dt class="thot-label">Prix</dt>
+                <dd>
+                    @Model.Prix.ToString("C", fr)
+                    <span class="thot-help">CAD</span>
+                </dd>
 
-            <dt>Description</dt>
-            <dd>@(string.IsNullOrWhiteSpace(Model.Description) ? "-" : Model.Description)</dd>
-        </dl>
+                <dt class="thot-label">Description</dt>
+                <dd>@(string.IsNullOrWhiteSpace(Model.Description) ? "-" : Model.Description)</dd>
+            </dl>
 
-        <p>
-            @Html.ActionLink("Retourner à la liste", "Index", null, new { @class = "btn btn-default" })
-            @Html.ActionLink("Éditer", "Edit", new { id = Model.id }, new { @class = "btn btn-primary", style = "margin-left:8px;" })
-        </p>
+            <p style="margin-top:12px;">
+                @Html.ActionLink("Retourner à la liste", "Index", null, new { @class = "btn btn-thot-ghost" })
+                @Html.ActionLink("Éditer", "Edit", new { id = Model.id }, new { @class = "btn btn-thot-primary", style = "margin-left:8px;" })
+            </p>
+        </div>
     </div>
     <div class="col-md-5">
-        <img src="@img" class="img-responsive img-thumbnail" alt="Image cours" />
+        <div class="thot-card" style="padding:10px;">
+            <img src="@img" class="img-responsive img-thumbnail" alt="Image cours" />
+        </div>
     </div>
 </div>
 
 @if (Model.Modules != null && Model.Modules.Any())
 {
-    <hr />
+    <hr class="soft-hr" />
     <h4>Modules</h4>
     <ul class="list-group">
         @foreach (var m in Model.Modules.OrderBy(x => x.Numero))
         {
             <li class="list-group-item">
-                <strong>Module @m.Numero:</strong> @m.Titre
+                <strong>Module @m.Numero :</strong> @m.Titre
             </li>
         }
     </ul>

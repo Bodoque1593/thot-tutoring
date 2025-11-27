@@ -3,29 +3,18 @@
     ViewBag.Title = "Tableau de bord";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .page-head {
-        margin-bottom: 16px;
-    }
-
-        .page-head h2 {
-            margin: 0 0 6px;
-        }
-
-    .soft-hr {
-        margin: 8px 0 16px;
-    }
-</style>
 
 <div class="page-head">
     <h2>Tableau de bord</h2>
+    <small>Vue d’ensemble de vos cours et questions</small>
     <hr class="soft-hr" />
 </div>
 
 <div class="row">
     <div class="col-md-7">
-        <div class="panel panel-primary">
-            <div class="panel-heading"><strong>Mes dernières inscriptions</strong></div>
+        <div class="thot-card">
+            <h4 class="thot-label">Mes dernières inscriptions</h4>
+            <hr class="soft-hr" />
             <ul class="list-group">
                 @if (Model.MesInscriptions == null || !Model.MesInscriptions.Any())
                 {
@@ -54,8 +43,9 @@
     </div>
 
     <div class="col-md-5">
-        <div class="panel panel-info">
-            <div class="panel-heading"><strong>Mes dernières questions</strong></div>
+        <div class="thot-card">
+            <h4 class="thot-label">Mes dernières questions</h4>
+            <hr class="soft-hr" />
             <ul class="list-group">
                 @if (Model.MesQuestions == null || !Model.MesQuestions.Any())
                 {
@@ -69,9 +59,13 @@
                             <span class="glyphicon glyphicon-question-sign"></span>
                             @q.Contenu
                             @if (!q.EstResolvee)
-                            {<span class="label label-warning" style="margin-left:6px;">Ouverte</span> }
+                            {
+                                <span class="label label-warning" style="margin-left:6px;">Ouverte</span>
+                            }
                             else
-                            { <span class="label label-success" style="margin-left:6px;">Résolue</span>}
+                            {
+                                <span class="label label-success" style="margin-left:6px;">Résolue</span>
+                            }
                             <a class="btn btn-xs btn-default pull-right" href="@Url.Action("Details","Question", new { id = q.id })">Voir</a>
                         </li>
                     }

@@ -13,7 +13,7 @@ print(CONN_STR)
 
 try:
     conn = pyodbc.connect(CONN_STR)
-    print("✅ Conexión OK!")
+    print(" Conexión OK!")
     cursor = conn.cursor()
     cursor.execute("SELECT TOP 1 id, QuestionTexte FROM dbo.EntreeFAQs;")
     row = cursor.fetchone()
@@ -21,5 +21,5 @@ try:
     cursor.close()
     conn.close()
 except Exception as ex:
-    print("❌ Error de conexión:")
+    print(" Error de conexión:")
     print(repr(ex))

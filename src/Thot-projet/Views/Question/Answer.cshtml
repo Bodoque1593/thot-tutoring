@@ -1,25 +1,54 @@
-﻿@{
+﻿@model Thot_projet.Models.Question
+@{
     ViewBag.Title = "Répondre";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var q = ViewBag.Question as Thot_projet.Models.Question;
 }
-<h2>Répondre</h2>
 
-<div class="panel panel-default">
-    <div class="panel-heading"><strong>Question #@q.id</strong> — @(q.Cours != null ? q.Cours.Nom : (q.Ressource?.ModuleCours?.Cours?.Nom ?? "-"))</div>
-    <div class="panel-body">
-        <p>@q.Contenu</p>
-        <hr />
-        @using (Html.BeginForm("Answer", "Question", FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-            @Html.Hidden("questionId", q.id)
-            <div class="form-group">
-                <label for="contenu">Votre réponse</label>
-                <textarea name="contenu" id="contenu" class="form-control" rows="4" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-success">Envoyer</button>
-            @Html.ActionLink("Annuler", "Details", new { id = q.id }, new { @class = "btn btn-default", style = "margin-left:8px" })
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
         }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Répondre à la question</h2>
+    <hr class="soft-hr" />
+</div>
+
+<div class="thot-card">
+    <div class="panel panel-default" style="margin-bottom:0;border:0;background:transparent;box-shadow:none;">
+        <div class="panel-heading" style="background:transparent;border-bottom:1px solid rgba(148,163,184,.4);color:#e5e7eb;">
+            <strong>Question #@q.id</strong> — @(q.Cours != null ? q.Cours.Nom : (q.Ressource?.ModuleCours?.Cours?.Nom ?? "-"))
+        </div>
+        <div class="panel-body" style="background:transparent;color:#e5e7eb;">
+            <p>@q.Contenu</p>
+            <hr />
+            @using (Html.BeginForm("Answer", "Question", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("questionId", q.id)
+
+                <div class="form-group">
+                    <label for="contenu" class="thot-label">Votre réponse</label>
+                    <textarea name="contenu" id="contenu" class="form-control thot-input" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-thot-primary">Envoyer</button>
+                @Html.ActionLink(
+                    "Annuler",
+                    "Details",
+                    new { id = q.id },
+                    new { @class = "btn btn-thot-ghost", style = "margin-left:8px" }
+                )
+            }
+        </div>
     </div>
 </div>

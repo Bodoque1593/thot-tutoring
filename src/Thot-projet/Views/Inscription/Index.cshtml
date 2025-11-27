@@ -3,22 +3,10 @@
     ViewBag.Title = "Mes cours";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .page-head {
-        margin-bottom: 16px;
-    }
-
-        .page-head h2 {
-            margin: 0 0 6px;
-        }
-
-    .soft-hr {
-        margin: 8px 0 16px;
-    }
-</style>
 
 <div class="page-head">
     <h2>Mes cours</h2>
+    <small>Liste des cours auxquels vous êtes inscrit</small>
     <hr class="soft-hr" />
 </div>
 
@@ -37,39 +25,49 @@
 
 @if (Model == null || !Model.Any())
 {
-    <div class="alert alert-info">Vous n’êtes inscrit à aucun cours.</div>
+    <div class="thot-card">
+        <p class="thot-help">Vous n’êtes inscrit à aucun cours.</p>
+    </div>
 }
 else
 {
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>Cours</th>
-                <th>Niveau</th>
-                <th>Inscrit le</th>
-                <th style="width:160px">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var i in Model)
-            {
-                var c = i.Cours;
+    <div class="thot-card">
+        <table class="table table-striped table-hover" style="margin-bottom:0;">
+            <thead>
                 <tr>
-                    <td>
-                        @if (c != null)
-                        {@Html.ActionLink(c.Nom, "Details", "Cours", new { id = c.id }, null) }
-                    else
-                    { <em>(cours supprimé)</em>}
-                    </td>
-                    <td>@(c?.Niveau ?? "-")</td>
-                    <td>@i.InscritLe.ToString("yyyy-MM-dd")</td>
-                    <td>
-                        @if (c != null)
-                        {@Html.ActionLink("Voir", "Details", "Cours", new { id = c.id }, new { @class = "btn btn-default btn-xs" })}
-                        @Html.ActionLink("Questions", "Index", "Question", null, new { @class = "btn btn-primary btn-xs", style = "margin-left:6px" })
-                    </td>
+                    <th>Cours</th>
+                    <th>Niveau</th>
+                    <th>Inscrit le</th>
+                    <th style="width:160px">Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var i in Model)
+                {
+                    var c = i.Cours;
+                    <tr>
+                        <td>
+                            @if (c != null)
+                            {
+                                @Html.ActionLink(c.Nom, "Details", "Cours", new { id = c.id }, null)
+                            }
+                            else
+                            {
+                                <em>(cours supprimé)</em>
+                            }
+                        </td>
+                        <td>@(c?.Niveau ?? "-")</td>
+                        <td>@i.InscritLe.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @if (c != null)
+                            {
+                                @Html.ActionLink("Voir", "Details", "Cours", new { id = c.id }, new { @class = "btn btn-thot-ghost btn-xs" })
+                            }
+                            @Html.ActionLink("Questions", "Index", "Question", null, new { @class = "btn btn-thot-primary btn-xs", style = "margin-left:6px" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }

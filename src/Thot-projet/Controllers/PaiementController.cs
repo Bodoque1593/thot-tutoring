@@ -19,12 +19,12 @@ namespace Thot_projet.Controllers
         // HttpClient pour parler au microservice Python (Stripe)
         private static readonly HttpClient http = new HttpClient
         {
-            // Assure-toi que c’est le même port que tu utilises avec uvicorn
-            BaseAddress = new Uri("http://127.0.0.1:8004/")
+            // ⚠️ MISMO puerto que uvicorn paiement_service
+            BaseAddress = new Uri("http://127.0.0.1:8002/")
         };
 
         // --------------------------------------------------------------------
-        //  PAIEMENTS CLASSIQUES (déjà existants)
+        //  PAIEMENTS CLASSIQUES (liste, création manuelle)
         // --------------------------------------------------------------------
 
         // Paiements de l'utilisateur courant
@@ -38,7 +38,7 @@ namespace Thot_projet.Controllers
             return View(list);
         }
 
-        // Création guidée depuis l’inscription (mode manuel, sans Stripe)
+        // Création guidée (sans Stripe, si tu veux garder ce mode)
         [RoleAuthorize("Etudiant")]
         public ActionResult Create(decimal? Montant, string Monnaie = "CAD", string Statut = "Payé")
         {
@@ -112,7 +112,7 @@ namespace Thot_projet.Controllers
                 return RedirectToAction("Browse", "Inscription");
             }
 
-            // Préparer le JSON à envoyer au microservice Python
+            // JSON à envoyer au microservice Python
             var payload = new
             {
                 CoursId = id,
@@ -128,7 +128,7 @@ namespace Thot_projet.Controllers
                 var response = await http.PostAsync("create-checkout-session", content);
                 if (!response.IsSuccessStatusCode)
                 {
-                    TempData["err"] = "Erreur lors de la création du paiement Stripe.";
+                    TempData["err"] = "Erreur paiement : code " + (int)response.StatusCode;
                     return RedirectToAction("Browse", "Inscription");
                 }
 
@@ -141,6 +141,7 @@ namespace Thot_projet.Controllers
             }
             catch (Exception ex)
             {
+                // Aquí venía tu mensaje "Error al enviar la solicitud."
                 TempData["err"] = "Erreur paiement : " + ex.Message;
                 return RedirectToAction("Browse", "Inscription");
             }
@@ -151,7 +152,7 @@ namespace Thot_projet.Controllers
         public ActionResult Success(string session_id)
         {
             TempData["ok"] = "Paiement complété (session : " + session_id + ").";
-            // Plus tard: enregistrer automatiquement un Paiement si tu veux.
+            // Si quieres, aquí podrías registrar el Paiement en la BD.
             return RedirectToAction("Index", "Inscription");
         }
 

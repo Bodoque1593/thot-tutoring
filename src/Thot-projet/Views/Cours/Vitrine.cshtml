@@ -3,47 +3,46 @@
     ViewBag.Title = "Vitrine des cours";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .page-head {
-        margin-bottom: 16px;
-    }
-
-        .page-head h2 {
-            margin: 0 0 6px;
-        }
-
-    .soft-hr {
-        margin: 8px 0 16px;
-    }
-
-    .thumb-img {
-        width: 100%;
-        height: auto;
-    }
-
-    .card-title {
-        margin: 6px 0 8px;
-    }
-</style>
 
 <div class="page-head">
     <h2>Vitrine des cours</h2>
+    <small>Découvrez les parcours créés par les tuteurs Thot</small>
     <hr class="soft-hr" />
 </div>
 
 <div class="row">
     @foreach (var c in Model)
     {
-        var img = !string.IsNullOrWhiteSpace(c.ImageUrl) ? c.ImageUrl : "https://via.placeholder.com/640x360?text=Cours";
+        var img = !string.IsNullOrWhiteSpace(c.ImageUrl)
+            ? c.ImageUrl
+            : "https://via.placeholder.com/640x360?text=Cours";
+
         <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
+            <div class="thumbnail thot-course-card">
                 <img class="thumb-img" src="@img" alt="@c.Nom" />
                 <div class="caption">
-                    <h4 class="card-title">@c.Nom</h4>
-                    <p><strong>Niveau :</strong> @c.Niveau</p>
-                    <p><strong>Prix :</strong> @c.Prix.ToString("C")</p>
-                    <p>@(string.IsNullOrWhiteSpace(c.Description) ? "-" : c.Description)</p>
-                    @Html.ActionLink("Voir", "Details", new { id = c.id }, new { @class = "btn btn-primary btn-sm" })
+                    <h4 class="thot-course-title">@c.Nom</h4>
+                    <p class="thot-course-meta">
+                        <span class="thot-badge">Niveau @c.Niveau</span>
+                        @if (c.Prix > 0)
+                        {
+                            @: &nbsp;· @c.Prix.ToString("C")
+                        }
+                        else
+                        {
+                            @: &nbsp;· Gratuit
+                        }
+                    </p>
+                    <p class="thot-help">
+                        @(string.IsNullOrWhiteSpace(c.Description)
+                            ? "Ce cours n’a pas encore de description détaillée."
+                            : c.Description)
+                    </p>
+                    @Html.ActionLink(
+                        "Voir le cours",
+                        "Details",
+                        new { id = c.id },
+                        new { @class = "btn btn-thot-primary btn-sm" })
                 </div>
             </div>
         </div>

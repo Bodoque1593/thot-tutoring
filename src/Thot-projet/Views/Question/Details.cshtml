@@ -2,28 +2,49 @@
 @using System.Linq
 @{
     ViewBag.Title = "Détails de la question";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var coursNom = (Model?.Ressource?.ModuleCours?.Cours?.Nom) ?? (Model?.Cours?.Nom) ?? "--";
+    var coursNom = (Model?.Ressource?.ModuleCours?.Cours?.Nom)
+                   ?? (Model?.Cours?.Nom)
+                   ?? "--";
     var resTitre = (Model?.Ressource?.Titre) ?? "Ressource";
-    var routeId = ViewContext.RouteData.Values["id"]?.ToString() ?? "";
 }
-<h2>Détails de la question</h2>
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Détails de la question</h2>
+    <hr class="soft-hr" />
+</div>
 
 @if (TempData["ok"] != null)
 {<div class="alert alert-success">@TempData["ok"]</div>}
 @if (TempData["err"] != null)
 {<div class="alert alert-danger">@TempData["err"]</div>}
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <strong>@coursNom</strong> · Ressource : @resTitre
-        @if (Model?.EstResolvee == true)
-        {<span class="label label-success" style="margin-left:8px;">Résolue</span> }
-        else
-        { <span class="label label-warning" style="margin-left:8px;">Ouverte</span>}
-    </div>
-    <div class="panel-body">
-        <p>@(Model?.Contenu ?? "")</p>
+<div class="thot-card">
+    <div class="panel panel-default" style="margin-bottom:0;border:0;background:transparent;">
+        <div class="panel-heading" style="background:transparent;border-bottom:1px solid rgba(148,163,184,.4);color:#e5e7eb;">
+            <strong>@coursNom</strong> · Ressource : @resTitre
+            @if (Model?.EstResolvee == true)
+            {<span class="label label-success" style="margin-left:8px;">Résolue</span> }
+            else
+            { <span class="label label-warning" style="margin-left:8px;">Ouverte</span>}
+        </div>
+        <div class="panel-body" style="background:transparent;color:#e5e7eb;">
+            <p>@(Model?.Contenu ?? "")</p>
+        </div>
     </div>
 </div>
 
@@ -33,14 +54,14 @@
 }
 @if (!reps.Any())
 {
-    <p>Aucune réponse pour l'instant.</p>
+    <p><em>Aucune réponse pour l'instant.</em></p>
 }
 else
 {
     <ul class="list-group">
         @foreach (var r in reps)
         {
-            <li class="list-group-item"><div>@r.Contenu</div></li>
+            <li class="list-group-item">@r.Contenu</li>
         }
     </ul>
 }
@@ -53,11 +74,9 @@ else
         @Html.AntiForgeryToken()
         @Html.Hidden("id", Model.id)
 
-        <!-- FR: champ vide pour ne pas réutiliser le texte précédent -->
-        <textarea name="contenu" class="form-control" rows="3"
+        <textarea name="contenu" class="form-control thot-input" rows="3"
                   placeholder="Écrire votre réponse..."></textarea>
 
-        <!-- FR: par défaut on coche pour marquer comme résolue -->
         <div class="checkbox" style="margin-top:8px">
             <label>
                 <input type="checkbox" name="resoudre" checked />
@@ -65,7 +84,13 @@ else
             </label>
         </div>
 
-        <button type="submit" class="btn btn-success" style="margin-top:8px">Répondre</button>
-        @Html.ActionLink("Retour", "Index_Tuteur", "Question", null, new { @class = "btn btn-default", style = "margin-top:8px;margin-left:8px" })
+        <button type="submit" class="btn btn-thot-primary" style="margin-top:8px">Répondre</button>
+        @Html.ActionLink(
+            "Retour",
+            "Index_Tuteur",
+            "Question",
+            null,
+            new { @class = "btn btn-thot-ghost", style = "margin-top:8px;margin-left:8px" }
+        )
     }
 }

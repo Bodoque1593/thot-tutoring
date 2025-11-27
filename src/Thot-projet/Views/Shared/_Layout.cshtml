@@ -13,32 +13,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" />
     <style>
-        body {
-            padding-top: 70px;
+        /
+        :root {
+            --thot-bg: #0b1020; /* fond général sombre */
+            --thot-panel: #111827; /* cartes */
+            --thot-panel-soft: #1f2937;
+            --thot-accent: #c9a227; /* or Thot */
+            --thot-accent-soft: #f4e5c3; /* sable / papyrus */
+            --thot-accent-dark: #8b6f16;
+            --thot-text: #e5e7eb;
+            --thot-muted: #9ca3af;
         }
 
-        @@media (max-width: 767px) {
-            body {
-                padding-top: 90px;
+        /* cabecera de página */
+        .page-head {
+            margin-bottom: 20px;
+        }
+
+            .page-head h2 {
+                margin: 0 0 4px;
+                font-weight: 600;
+                color: var(--thot-accent-soft);
             }
+
+            .page-head small {
+                color: var(--thot-muted);
+            }
+
+        .soft-hr {
+            margin: 8px 0 16px;
+            border: 0;
+            border-top: 1px solid rgba(201, 162, 39, 0.35);
         }
 
-        .navbar-brand {
+        /* tarjetas principales */
+        .thot-card {
+            background: linear-gradient(135deg, var(--thot-panel), var(--thot-panel-soft));
+            border-radius: 10px;
+            padding: 20px 22px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .45);
+            border-top: 3px solid var(--thot-accent);
+            color: var(--thot-text);
+        }
+
+        /* auth card más angosta */
+        .thot-auth-card {
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        /* labels y textos */
+        .thot-label {
+            color: var(--thot-accent-soft);
+            font-weight: 500;
+        }
+
+        .thot-help {
+            color: var(--thot-muted);
+        }
+
+        /* inputs: reusar Bootstrap pero con borde dorado suave al focus */
+        .thot-input.form-control {
+            background-color: #020617;
+            border-color: #334155;
+            color: var(--thot-text);
+        }
+
+            .thot-input.form-control:focus {
+                border-color: var(--thot-accent);
+                box-shadow: 0 0 0 1px rgba(201, 162, 39, .4);
+            }
+
+        /* botones */
+        .btn-thot-primary {
+            background: var(--thot-accent);
+            border-color: var(--thot-accent-dark);
+            color: #111827;
             font-weight: 600;
         }
 
-        .footer {
-            margin-top: 40px;
-            color: #777;
+            .btn-thot-primary:hover {
+                background: var(--thot-accent-dark);
+                border-color: var(--thot-accent-dark);
+                color: #f9fafb;
+            }
+
+        .btn-thot-ghost {
+            background: transparent;
+            border-color: var(--thot-accent);
+            color: var(--thot-accent-soft);
         }
 
-        .alert + .alert {
-            margin-top: 10px;
+            .btn-thot-ghost:hover {
+                background: rgba(201, 162, 39, .1);
+                color: var(--thot-accent-soft);
+            }
+
+        /* badges pequeñas (niveles, prix, etc.) */
+        .thot-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            background: rgba(201, 162, 39, .15);
+            color: var(--thot-accent-soft);
         }
 
-        .navbar-fixed-top + .container {
-            padding-top: 10px;
+        /* cards de cursos (vitrine) */
+        .thot-course-card.thumbnail {
+            background: linear-gradient(145deg, #020617, #020617);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #1f2937;
         }
+
+        .thot-course-card .caption {
+            padding: 12px 14px 16px;
+        }
+
+        .thot-course-title {
+            color: var(--thot-accent-soft);
+            font-weight: 600;
+        }
+
+        .thot-course-meta {
+            font-size: 12px;
+            color: var(--thot-muted);
+        }
+
     </style>
 </head>
 <body>

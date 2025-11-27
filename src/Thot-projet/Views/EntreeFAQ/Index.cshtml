@@ -4,39 +4,23 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var isTuteur = string.Equals(Convert.ToString(Session["UserRole"] ?? ""), "Tuteur", StringComparison.OrdinalIgnoreCase);
 }
-<style>
-    .page-head {
-        margin-bottom: 16px;
-    }
-
-        .page-head h2 {
-            margin: 0 0 6px;
-        }
-
-    .soft-hr {
-        margin: 8px 0 16px;
-    }
-
-    .panel-title a {
-        display: inline-block;
-        width: 100%;
-        text-decoration: none;
-    }
-</style>
 
 <div class="page-head">
     <h2>Foire aux questions</h2>
+    <small>Questions fréquentes sur la plateforme Thot</small>
     <hr class="soft-hr" />
 </div>
 
 @if (isTuteur)
 {
-    <p>@Html.ActionLink("Ajouter une entrée", "Create", null, new { @class = "btn btn-success" })</p>
+    <p>@Html.ActionLink("Ajouter une entrée", "Create", null, new { @class = "btn btn-thot-primary" })</p>
 }
 
 @if (Model == null || !Model.Any())
 {
-    <p><em>Aucune entrée pour le moment.</em></p>
+    <div class="thot-card">
+        <p class="thot-help"><em>Aucune entrée pour le moment.</em></p>
+    </div>
 }
 else
 {
@@ -45,9 +29,9 @@ else
         {
             var anchorId = "f" + Convert.ToString(f.id);
             <div class="panel panel-default">
-                <div class="panel-heading">
+                <div class="panel-heading" style="background-color:#020617;border-color:#1f2937;">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#faq" href="#@anchorId">
+                        <a data-toggle="collapse" data-parent="#faq" href="#@anchorId" style="color:#e5e7eb;">
                             @f.QuestionTexte
                             <span class="label label-default" style="margin-left:6px;">
                                 @f.PublieLe.ToString("yyyy-MM-dd")
@@ -56,7 +40,7 @@ else
                     </h4>
                 </div>
                 <div id="@anchorId" class="panel-collapse collapse">
-                    <div class="panel-body">
+                    <div class="panel-body" style="background-color:#020617;color:#e5e7eb;">
                         @Html.Raw((f.ReponseTexte ?? "").Replace("\n", "<br/>"))
                         @if (isTuteur)
                         {

@@ -5,54 +5,45 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    .page-head {
-        margin-bottom: 16px;
-    }
-
-        .page-head h2 {
-            margin: 0 0 6px;
-        }
-
-    .soft-hr {
-        margin: 8px 0 16px;
-    }
-</style>
-
 <div class="page-head">
     <h2>Créer une entrée FAQ</h2>
+    <small>Ajoutez une question/réponse pour aider les utilisateurs</small>
     <hr class="soft-hr" />
 </div>
 
-@using (Html.BeginForm("Create", "EntreeFAQ", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
+<div class="thot-card">
+    @using (Html.BeginForm("Create", "EntreeFAQ", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-group">
-            <label class="control-label col-md-2">Question</label>
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.QuestionTexte,
-                    new { @class = "form-control", placeholder = "Votre question..." })
+            <div class="form-group">
+                <label class="control-label col-md-2 thot-label">Question</label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.QuestionTexte,
+                        new { @class = "form-control thot-input", placeholder = "Votre question..." })
+                    @Html.ValidationMessageFor(m => m.QuestionTexte, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2 thot-label">Réponse</label>
+                <div class="col-md-10">
+                    @Html.TextAreaFor(m => m.ReponseTexte,
+                        new { @class = "form-control thot-input", rows = 5, placeholder = "Votre réponse..." })
+                    @Html.ValidationMessageFor(m => m.ReponseTexte, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="submit" class="btn btn-thot-primary">Créer</button>
+                    @Html.ActionLink("Annuler", "Index", "EntreeFAQ", null,
+                        new { @class = "btn btn-thot-ghost", style = "margin-left:8px;" })
+                </div>
             </div>
         </div>
-
-        <div class="form-group">
-            <label class="control-label col-md-2">Réponse</label>
-            <div class="col-md-10">
-                @Html.TextAreaFor(m => m.ReponseTexte,
-                    new { @class = "form-control", rows = 5, placeholder = "Votre réponse..." })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <button type="submit" class="btn btn-primary">Créer</button>
-                @Html.ActionLink("Annuler", "Index", "EntreeFAQ", null,
-                    new { @class = "btn btn-default", style = "margin-left:8px;" })
-            </div>
-        </div>
-    </div>
-}
+    }
+</div>

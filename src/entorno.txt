@@ -1,0 +1,10 @@
+python -m venv env
+env\Scripts\activate
+------------------------------
+faq:
+
+uvicorn faq_service:app --reload --port 8001
+uvicorn payment_service:app --reload --port 8002
+uvicorn auth_service:app --reload --port 8004
+uvicorn stats_services:app --reload --port 8005
+uvicorn inscription_service:app --reload --port 8006

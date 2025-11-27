@@ -3,38 +3,28 @@
     ViewBag.Title = "Supprimer l'inscription";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .page-head {
-        margin-bottom: 16px;
-    }
-
-        .page-head h2 {
-            margin: 0 0 6px;
-        }
-
-    .soft-hr {
-        margin: 8px 0 16px;
-    }
-</style>
 
 <div class="page-head">
     <h2>Supprimer</h2>
+    <small>Confirmez la suppression de cette inscription</small>
     <hr class="soft-hr" />
 </div>
 
-<p>Êtes-vous sûr de vouloir supprimer cette inscription ?</p>
+<div class="thot-card">
+    <p>Êtes-vous sûr de vouloir supprimer cette inscription ?</p>
 
-<dl class="dl-horizontal">
-    <dt>Étudiant</dt>
-    <dd>@(Model.Utilisateur?.Nomcomplet)</dd>
-    <dt>Cours</dt>
-    <dd>@(Model.Cours?.Nom)</dd>
-</dl>
+    <dl class="dl-horizontal" style="margin-top:15px;">
+        <dt class="thot-label">Étudiant</dt>
+        <dd>@(Model.Utilisateur?.Nomcomplet)</dd>
+        <dt class="thot-label">Cours</dt>
+        <dd>@(Model.Cours?.Nom)</dd>
+    </dl>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    @Html.HiddenFor(m => m.id)
-    <input type="submit" value="Supprimer" class="btn btn-danger" />
-    @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
-}
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.id)
+        <input type="submit" value="Supprimer" class="btn btn-danger" />
+        @Html.ActionLink("Annuler", "Index", null, new { @class = "btn btn-thot-ghost", style = "margin-left:8px;" })
+    }
+</div>

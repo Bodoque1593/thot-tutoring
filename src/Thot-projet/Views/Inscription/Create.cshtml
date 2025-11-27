@@ -3,47 +3,42 @@
     ViewBag.Title = "Créer une inscription";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .page-head {
-        margin-bottom: 16px;
-    }
-
-        .page-head h2 {
-            margin: 0 0 6px;
-        }
-
-    .soft-hr {
-        margin: 8px 0 16px;
-    }
-</style>
 
 <div class="page-head">
     <h2>Créer une inscription</h2>
+    <small>Associer un étudiant à un cours</small>
     <hr class="soft-hr" />
 </div>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<div class="thot-card">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.UtilisateurId, "Étudiant")
-        @Html.DropDownList("UtilisateurId", (SelectList)ViewBag.UtilisateurId, "-- choisissez un étudiant --", new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.UtilisateurId, "", new { @class = "text-danger" })
-    </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.UtilisateurId, "Étudiant", new { @class = "thot-label" })
+            @Html.DropDownList("UtilisateurId",
+                (SelectList)ViewBag.UtilisateurId,
+                "-- choisissez un étudiant --",
+                new { @class = "form-control thot-input" })
+            @Html.ValidationMessageFor(m => m.UtilisateurId, "", new { @class = "text-danger" })
+        </div>
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.CoursId, "Cours")
-        @Html.DropDownList("CoursId", (SelectList)ViewBag.CoursId, "-- choisissez un cours --", new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.CoursId, "", new { @class = "text-danger" })
-    </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CoursId, "Cours", new { @class = "thot-label" })
+            @Html.DropDownList("CoursId",
+                (SelectList)ViewBag.CoursId,
+                "-- choisissez un cours --",
+                new { @class = "form-control thot-input" })
+            @Html.ValidationMessageFor(m => m.CoursId, "", new { @class = "text-danger" })
+        </div>
 
-    <input type="submit" value="Enregistrer" class="btn btn-success" />
-    @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default", style = "margin-left:8px;" })
-}
+        <input type="submit" value="Enregistrer" class="btn btn-thot-primary" />
+        @Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-thot-ghost", style = "margin-left:8px;" })
+    }
+</div>
 
-<!-- Validaciones sin bundles -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>

@@ -3,78 +3,105 @@
     ViewBag.Title = "Créer un compte";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .page-head {
-        margin-bottom: 16px;
-    }
-
-        .page-head h2 {
-            margin: 0 0 6px;
-        }
-
-    .soft-hr {
-        margin: 8px 0 16px;
-    }
-
-    .help-block {
-        color: #777;
-    }
-</style>
 
 <div class="page-head">
     <h2>Créer un compte</h2>
+    <small>Rejoignez la communauté Thot pour enseigner ou apprendre</small>
     <hr class="soft-hr" />
 </div>
 
-@using (Html.BeginForm("Register", "Auth", FormMethod.Post, new { @class = "form", role = "form" }))
-{
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<div class="thot-card thot-auth-card">
+    @using (Html.BeginForm("Register", "Auth", FormMethod.Post, new { @class = "form", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.Email)
-        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "exemple@thot.com", autofocus = "autofocus" })
-        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.Nomcomplet)
-        @Html.TextBoxFor(m => m.Nomcomplet, new { @class = "form-control", placeholder = "Nom et prénom" })
-        @Html.ValidationMessageFor(m => m.Nomcomplet, "", new { @class = "text-danger" })
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.Role, "Rôle")
-        @Html.DropDownListFor(
-            m => m.Role,
-            new SelectList(new[] { "Etudiant", "Tuteur" }),
-            "-- choisissez votre rôle --",
-            new { @class = "form-control" }
-        )
-        @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.Motdepasse)
-        @Html.PasswordFor(m => m.Motdepasse, new { @class = "form-control", id = "pwd", placeholder = "Mot de passe" })
-        @Html.ValidationMessageFor(m => m.Motdepasse, "", new { @class = "text-danger" })
-
-        <div style="margin-top:8px;">
-            <button type="button" id="btnGenLocal" class="btn btn-default">Générer un mot de passe</button>
-            <button type="button" id="btnToggle" class="btn btn-default">Afficher/Masquer</button>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Email, new { @class = "thot-label" })
+            @Html.TextBoxFor(
+                m => m.Email,
+                new
+                {
+                    @class = "form-control thot-input",
+                    placeholder = "exemple@thot.com",
+                    autofocus = "autofocus"
+                })
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
         </div>
-        <small class="help-block">Générez un mot de passe robuste localement.</small>
-    </div>
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.ConfirmMotdepasse)
-        @Html.PasswordFor(m => m.ConfirmMotdepasse, new { @class = "form-control", id = "pwd2", placeholder = "Confirmer le mot de passe" })
-        @Html.ValidationMessageFor(m => m.ConfirmMotdepasse, "", new { @class = "text-danger" })
-    </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Nomcomplet, new { @class = "thot-label" })
+            @Html.TextBoxFor(
+                m => m.Nomcomplet,
+                new
+                {
+                    @class = "form-control thot-input",
+                    placeholder = "Nom et prénom"
+                })
+            @Html.ValidationMessageFor(m => m.Nomcomplet, "", new { @class = "text-danger" })
+        </div>
 
-    <button type="submit" class="btn btn-success">Créer mon compte</button>
-    @Html.ActionLink("J’ai déjà un compte", "Login", "Auth", null, new { @class = "btn btn-link" })
-}
+        <div class="form-group">
+            @Html.LabelFor(m => m.Role, "Rôle", new { @class = "thot-label" })
+            @Html.DropDownListFor(
+                m => m.Role,
+                new SelectList(new[] { "Etudiant", "Tuteur" }),
+                "-- choisissez votre rôle --",
+                new { @class = "form-control thot-input" }
+            )
+            @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Motdepasse, new { @class = "thot-label" })
+            @Html.PasswordFor(
+                m => m.Motdepasse,
+                new
+                {
+                    @class = "form-control thot-input",
+                    id = "pwd",
+                    placeholder = "Mot de passe"
+                })
+            @Html.ValidationMessageFor(m => m.Motdepasse, "", new { @class = "text-danger" })
+
+            <div style="margin-top:8px;">
+                <button type="button" id="btnGenLocal" class="btn btn-xs btn-thot-ghost">
+                    Générer un mot de passe
+                </button>
+                <button type="button" id="btnToggle" class="btn btn-xs btn-thot-ghost">
+                    Afficher / masquer
+                </button>
+            </div>
+            <small class="thot-help">
+                Un mot de passe robuste est généré localement, sans quitter votre navigateur.
+            </small>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.ConfirmMotdepasse, new { @class = "thot-label" })
+            @Html.PasswordFor(
+                m => m.ConfirmMotdepasse,
+                new
+                {
+                    @class = "form-control thot-input",
+                    id = "pwd2",
+                    placeholder = "Confirmer le mot de passe"
+                })
+            @Html.ValidationMessageFor(m => m.ConfirmMotdepasse, "", new { @class = "text-danger" })
+        </div>
+
+        <button type="submit" class="btn btn-thot-primary btn-block">
+            Créer mon compte
+        </button>
+        @Html.ActionLink(
+            "J’ai déjà un compte",
+            "Login",
+            "Auth",
+            null,
+            new { @class = "btn btn-link thot-help", style = "margin-top:8px;" }
+        )
+    }
+</div>
 
 @section Scripts {
     <script>
@@ -82,7 +109,9 @@
             function genLocal(len) {
                 var chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!#$%*-_";
                 var out = "";
-                for (var i = 0; i < len; i++) out += chars.charAt(Math.floor(Math.random() * chars.length));
+                for (var i = 0; i < len; i++) {
+                    out += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
                 return out;
             }
 

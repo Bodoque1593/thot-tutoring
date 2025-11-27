@@ -3,29 +3,45 @@
     ViewBag.Title = "Mes questions";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // Compteurs simples (B3): total / ouvertes / résolues
     var total = Model == null ? 0 : Model.Count();
     var ouvertes = Model == null ? 0 : Model.Count(q => !q.EstResolvee);
     var resolues = total - ouvertes;
 }
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
 
-<h2>Mes questions</h2>
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
 
-@* Messages flash (même style que le reste du site) *@
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Mes questions</h2>
+    <hr class="soft-hr" />
+</div>
+
 @if (TempData["ok"] != null)
 {
-    <div class="alert alert-success"><span class="glyphicon glyphicon-ok-sign"></span> @TempData["ok"]</div>
+    <div class="alert alert-success">
+        <span class="glyphicon glyphicon-ok-sign"></span> @TempData["ok"]
+    </div>
 }
 @if (TempData["err"] != null)
 {
-    <div class="alert alert-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> @TempData["err"]</div>
+    <div class="alert alert-danger">
+        <span class="glyphicon glyphicon-exclamation-sign"></span> @TempData["err"]
+    </div>
 }
 
 <p>
-    @* Bouton pour poser une nouvelle question (même contrôleur) *@
-    @Html.ActionLink("Poser une question", "Create", "Question", null, new { @class = "btn btn-success" })
+    @Html.ActionLink("Poser une question", "Create", "Question", null, new { @class = "btn btn-thot-primary" })
 
-    @* Petites pastilles d’info *@
     <span class="label label-info" style="margin-left:8px;">Total: @total</span>
     <span class="label label-warning" style="margin-left:4px;">Ouvertes: @ouvertes</span>
     <span class="label label-success" style="margin-left:4px;">Résolues: @resolues</span>
@@ -37,38 +53,45 @@
 }
 else
 {
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th>Cours</th>
-                <th>Ressource</th>
-                <th>Créée le</th>
-                <th>État</th>
-                <th style="width:120px;"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var q in Model.OrderByDescending(x => x.Creele))
-            {
-                // Sécuriser l’accès aux props liées (peuvent être null)
-                var coursNom = q.Cours != null ? (q.Cours.Nom ?? "-") : "-";
-                var resTitre = q.Ressource != null ? (q.Ressource.Titre ?? "-") : "-";
-
+    <div class="thot-card">
+        <table class="table table-striped table-bordered">
+            <thead>
                 <tr>
-                    <td>@coursNom</td>
-                    <td>@resTitre</td>
-                    <td>@q.Creele.ToString("yyyy-MM-dd HH:mm")</td>
-                    <td>
-                        @if (q.EstResolvee)
-                        {<span class="label label-success">Résolue</span> }
-                        else
-                        { <span class="label label-warning">Ouverte</span>}
-                    </td>
-                    <td>
-                        @Html.ActionLink("Détails", "Details", "Question", new { id = q.id }, new { @class = "btn btn-primary btn-xs" })
-                    </td>
+                    <th>Cours</th>
+                    <th>Ressource</th>
+                    <th>Créée le</th>
+                    <th>État</th>
+                    <th style="width:120px;"></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var q in Model.OrderByDescending(x => x.Creele))
+                {
+                    var coursNom = q.Cours != null ? (q.Cours.Nom ?? "-") : "-";
+                    var resTitre = q.Ressource != null ? (q.Ressource.Titre ?? "-") : "-";
+
+                    <tr>
+                        <td>@coursNom</td>
+                        <td>@resTitre</td>
+                        <td>@q.Creele.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            @if (q.EstResolvee)
+                            {<span class="label label-success">Résolue</span> }
+                            else
+                            { <span class="label label-warning">Ouverte</span>}
+                        </td>
+                        <td>
+                            @Html.ActionLink(
+                                "Détails",
+                                "Details",
+                                "Question",
+                                new { id = q.id },
+                                new { @class = "btn btn-thot-primary btn-xs" }
+                            )
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }

@@ -1,6 +1,9 @@
 ﻿@{
     ViewBag.Title = "Statistiques Thot";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var topCours = ViewBag.TopCours as List<System.Collections.Generic.KeyValuePair<string, int>>;
+    bool aucunTop = (topCours == null || topCours.Count == 0);
 }
 
 <div class="page-head">
@@ -65,11 +68,7 @@ else
 
     <h3>Top cours (par inscriptions)</h3>
 
-    @{
-        var topCours = ViewBag.TopCours as List<System.Collections.Generic.KeyValuePair<string, int>>;
-    }
-
-    @if (topCours == null || topCours.Count == 0)
+    if (aucunTop)
     {
         <p><em>Aucun cours avec des inscriptions.</em></p>
     }

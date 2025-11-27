@@ -8,54 +8,87 @@
     {
         if (obj == null) return null;
         var t = obj.GetType();
-        var p = t.GetProperty("Id") ?? t.GetProperty("ID") ?? t.GetProperty("QuestionId") ?? t.GetProperty("IdQuestion") ?? t.GetProperty("id");
+        var p = t.GetProperty("Id") ?? t.GetProperty("ID") ??
+                t.GetProperty("QuestionId") ?? t.GetProperty("IdQuestion") ??
+                t.GetProperty("id");
         return p != null ? p.GetValue(obj, null) : null;
     };
 }
-<h2>Questions</h2>
+<style>
+    .page-head {
+        margin-bottom: 16px;
+    }
+
+        .page-head h2 {
+            margin: 0 0 6px;
+        }
+
+    .soft-hr {
+        margin: 8px 0 16px;
+    }
+</style>
+
+<div class="page-head">
+    <h2>Questions</h2>
+    <hr class="soft-hr" />
+</div>
 
 @if (TempData["ok"] != null)
 {<div class="alert alert-success">@TempData["ok"]</div>}
 @if (TempData["err"] != null)
 {<div class="alert alert-danger">@TempData["err"]</div>}
 
-<table class="table table-striped">
-    <thead>
-        <tr><th>Cours</th><th>Ressource</th><th>État</th><th>Contenu</th><th style="width:120px">Actions</th></tr>
-    </thead>
-    <tbody>
-        @if (Model != null && Model.Any())
-        {
-            foreach (var q in Model)
+<div class="thot-card">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Cours</th>
+                <th>Ressource</th>
+                <th>État</th>
+                <th>Contenu</th>
+                <th style="width:120px">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
             {
-                var coursNom = q.Ressource?.ModuleCours?.Cours?.Nom ?? q.Cours?.Nom ?? "--";
-                var resTitre = q.Ressource?.Titre ?? "--";
-                var key = getKey(q);
+                foreach (var q in Model)
+                {
+                    var coursNom = q.Ressource?.ModuleCours?.Cours?.Nom ?? q.Cours?.Nom ?? "--";
+                    var resTitre = q.Ressource?.Titre ?? "--";
+                    var key = getKey(q);
 
-                <tr>
-                    <td>@coursNom</td>
-                    <td>@resTitre</td>
-                    <td>
-                        @if (q.EstResolvee)
-                        {<span class="label label-success">Résolue</span> }
-                        else
-                        { <span class="label label-warning">Ouverte</span>}
-                    </td>
-                    <td>@(q.Contenu ?? "")</td>
-                    <td>
-                        @if (key != null)
-                        {
-                            @Html.ActionLink("Voir", "Details", "Question", new { id = key }, new { @class = "btn btn-primary btn-sm" })
-                        }
-                        else
-                        { <span class="text-muted">Id inconnu</span>}
-                    </td>
-                </tr>
+                    <tr>
+                        <td>@coursNom</td>
+                        <td>@resTitre</td>
+                        <td>
+                            @if (q.EstResolvee)
+                            {<span class="label label-success">Résolue</span> }
+                            else
+                            { <span class="label label-warning">Ouverte</span>}
+                        </td>
+                        <td>@(q.Contenu ?? "")</td>
+                        <td>
+                            @if (key != null)
+                            {
+                                @Html.ActionLink(
+                                    "Voir",
+                                    "Details",
+                                    "Question",
+                                    new { id = key },
+                                    new { @class = "btn btn-thot-primary btn-sm" }
+                                )
+                            }
+                            else
+                            { <span class="text-muted">Id inconnu</span>}
+                        </td>
+                    </tr>
+                }
             }
-        }
-        else
-        {
-            <tr><td colspan="5">Aucune question.</td></tr>
-        }
-    </tbody>
-</table>
+            else
+            {
+                <tr><td colspan="5"><em>Aucune question.</em></td></tr>
+            }
+        </tbody>
+    </table>
+</div>

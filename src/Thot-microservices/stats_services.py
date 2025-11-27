@@ -1,34 +1,43 @@
+"""
+role:
+- Microservice de statistiques (FastAPI)
+- Calcule un aperçu global sur la base ThotDb
+"""
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 import pyodbc
 
 # -------------------------------------------------------------------
-#  CONNEXION SQL SERVER  (igual que faq_service)
+# Connexion SQL Server
 # -------------------------------------------------------------------
+
 CONN_STR = (
     "Driver={ODBC Driver 17 for SQL Server};"
-    "Server=BODOQUE-TUF\\JUAN2;"   # <-- tu servidor
+    "Server=BODOQUE-TUF\\JUAN2;"
     "Database=ThotDb;"
     "Trusted_Connection=yes;"
 )
+
 
 def get_connection():
     try:
         return pyodbc.connect(CONN_STR)
     except Exception as ex:
-        print("❌ Erreur connexion SQL:", ex)
+        print("Erreur connexion SQL:", ex)
         raise HTTPException(status_code=500, detail="Erreur de connexion SQL")
 
 
 # -------------------------------------------------------------------
-#  MODELOS Pydantic – solo para la API, NO cambian tu BD
+# Modèles Pydantic
 # -------------------------------------------------------------------
 
 class CourseStat(BaseModel):
     id: int
     nom: str
     nbInscriptions: int
+
 
 class StatsOverview(BaseModel):
     totalCours: int
@@ -40,7 +49,7 @@ class StatsOverview(BaseModel):
 
 
 # -------------------------------------------------------------------
-#  APP FastAPI
+# App FastAPI
 # -------------------------------------------------------------------
 
 app = FastAPI(
@@ -50,15 +59,15 @@ app = FastAPI(
 )
 
 
-@app.get("/health", tags=["health"])
+@app.get("/health")
 def health():
     return {"status": "ok", "service": "stats"}
 
 
-@app.get("/stats/overview", response_model=StatsOverview, tags=["stats"])
+@app.get("/stats/overview", response_model=StatsOverview)
 def stats_overview():
     """
-    Retourne des statistiques globales:
+    Retourne des statistiques globales :
       - totalCours
       - totalUtilisateurs
       - totalQuestions
@@ -70,28 +79,21 @@ def stats_overview():
         conn = get_connection()
         cur = conn.cursor()
 
-        # 1) Total cours (table dbo.Cours, PK = id)
         cur.execute("SELECT COUNT(*) FROM dbo.Cours;")
         total_cours = cur.fetchone()[0]
 
-        # 2) Total utilisateurs (dbo.Utilisateurs)
         cur.execute("SELECT COUNT(*) FROM dbo.Utilisateurs;")
         total_utilisateurs = cur.fetchone()[0]
 
-        # 3) Total questions (dbo.Questions)
         cur.execute("SELECT COUNT(*) FROM dbo.Questions;")
         total_questions = cur.fetchone()[0]
 
-        # 4) Questions ouvertes (colonne EstResolvee = 0)
         cur.execute("SELECT COUNT(*) FROM dbo.Questions WHERE EstResolvee = 0;")
         questions_ouvertes = cur.fetchone()[0]
 
-        # 5) Total FAQ (dbo.EntreeFAQs)
         cur.execute("SELECT COUNT(*) FROM dbo.EntreeFAQs;")
         total_faq = cur.fetchone()[0]
 
-        # 6) Top 5 cours par nombre d'inscriptions
-        #    PK = id dans Cours et Inscription
         cur.execute(
             """
             SELECT TOP 5
@@ -113,7 +115,7 @@ def stats_overview():
                 CourseStat(
                     id=row[0],
                     nom=row[1],
-                    nbInscriptions=row[2]
+                    nbInscriptions=row[2],
                 )
             )
 
@@ -132,5 +134,5 @@ def stats_overview():
     except HTTPException:
         raise
     except Exception as ex:
-        print("❌ Erreur stats_overview:", ex)
+        print("Erreur stats_overview:", ex)
         raise HTTPException(status_code=500, detail="Erreur interne stats")

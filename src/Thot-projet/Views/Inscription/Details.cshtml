@@ -3,32 +3,22 @@
     ViewBag.Title = "Détails de l'inscription";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .page-head {
-        margin-bottom: 16px;
-    }
-
-        .page-head h2 {
-            margin: 0 0 6px;
-        }
-
-    .soft-hr {
-        margin: 8px 0 16px;
-    }
-</style>
 
 <div class="page-head">
     <h2>Détails</h2>
+    <small>Information sur cette inscription</small>
     <hr class="soft-hr" />
 </div>
 
-<dl class="dl-horizontal">
-    <dt>Étudiant</dt>
-    <dd>@(Model.Utilisateur?.Nomcomplet)</dd>
-    <dt>Cours</dt>
-    <dd>@(Model.Cours?.Nom)</dd>
-    <dt>Inscrit le</dt>
-    <dd>@Model.InscritLe.ToString("yyyy-MM-dd HH:mm")</dd>
-</dl>
+<div class="thot-card">
+    <dl class="dl-horizontal">
+        <dt class="thot-label">Étudiant</dt>
+        <dd>@(Model.Utilisateur?.Nomcomplet)</dd>
+        <dt class="thot-label">Cours</dt>
+        <dd>@(Model.Cours?.Nom)</dd>
+        <dt class="thot-label">Inscrit le</dt>
+        <dd>@Model.InscritLe.ToString("yyyy-MM-dd HH:mm")</dd>
+    </dl>
 
-<p>@Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-default" })</p>
+    <p>@Html.ActionLink("Retour", "Index", null, new { @class = "btn btn-thot-ghost" })</p>
+</div>
