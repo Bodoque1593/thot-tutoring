@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Chat IA";
+}
+
+<h2 style="margin-bottom:15px;">Chat IA (Ollama)</h2>
+
+<form method="post" action="/ChatIA/Ask" style="margin-bottom:20px;">
+    <label>Écrivez votre question :</label><br />
+
+    <input type="text"
+           name="question"
+           value="@ViewBag.Question"
+           class="form-control"
+           placeholder="Exemple : Que peux-tu faire pour moi ?"
+           style="width: 60%; display:inline-block;" />
+
+    <button type="submit" class="btn btn-primary" style="margin-left:10px;">
+        Envoyer
+    </button>
+</form>
+
+@if (ViewBag.Response != null)
+{
+    <h4>Réponse :</h4>
+    <div style="background:#F5F5F5; padding:15px; border-radius:8px; width:70%;">
+        @ViewBag.Response
+    </div>
+}
